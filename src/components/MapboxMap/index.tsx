@@ -4,7 +4,9 @@ import { Helmet } from "react-helmet";
 
 import ZoomControl from "mapbox-gl-controls/lib/zoom";
 
-import MapboxContext, { MapboxMapTransform } from "../../contexts/MapboxContext";
+import MapboxContext, {
+  MapboxMapTransform,
+} from "../../contexts/mapboxContext";
 
 type MapboxMapProps = {
   token: string;
@@ -34,7 +36,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   initialCenter,
   initialZoom,
   showControls,
-  scrollZoom,
+  scrollZoom = true,
   fitBounds,
   transformRequest,
 }) => {

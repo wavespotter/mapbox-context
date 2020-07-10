@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import MapboxContext from "../contexts/MapboxContext";
+import MapboxContext from "../contexts/mapboxContext";
 
 type HandlerType<T extends keyof mapboxgl.MapEventType> = (
   ev: mapboxgl.MapEventType[T] & mapboxgl.EventData

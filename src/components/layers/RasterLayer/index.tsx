@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from "react";
-import MapboxContext from "../../../contexts/MapboxContext";
+import MapboxContext from "../../../contexts/mapboxContext";
 import useDeepCompareEffect from "use-deep-compare-effect";
 
 const RasterLayer: React.FC<{

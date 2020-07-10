@@ -3,7 +3,7 @@ import MapboxMap from "./components/MapboxMap";
 import DOMLayer from "./components/layers/DOMLayer";
 import LineLayer from "./components/layers/LineLayer";
 import RasterLayer from "./components/layers/RasterLayer";
-import MapboxMapContext from "./contexts/MapboxContext";
+import MapboxMapContext from "./contexts/mapboxContext";
 
 import useMapEvent from "./hooks/useMapEvent";
 

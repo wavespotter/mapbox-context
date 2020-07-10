@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from "react";
-import MapboxContext from "../../../contexts/MapboxContext";
+import MapboxContext from "../../../contexts/mapboxContext";
 
 const LineLayer: React.FC<{
   line: GeoJSON.Feature | GeoJSON.FeatureCollection;
