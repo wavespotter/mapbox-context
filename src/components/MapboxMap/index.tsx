@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
-import { Helmet } from "react-helmet";
 
 import ZoomControl from "mapbox-gl-controls/lib/zoom";
 
@@ -117,12 +116,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
 
   return (
     <>
-      <Helmet>
-        <link
-          href="https://api.mapbox.com/mapbox-gl-js/v1.7.0/mapbox-gl.css"
-          rel="stylesheet"
-        />
-      </Helmet>
       <div style={{ width, height, overflow: "hidden", position: "relative" }}>
         <div
           ref={mapContainer}
