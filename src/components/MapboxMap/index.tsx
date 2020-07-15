@@ -54,13 +54,13 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   useDeepCompareEffect( () => {
     if (!map || !fitBounds) return;
     map.fitBounds(fitBounds.bounds, fitBounds.options);
-  },[fitBounds]);
+  },[{ fitBounds }]);
 
   // Let the parent component overwrite the map center
   useDeepCompareEffect( () => {
     if (!map || !center) return;
     map.setCenter(center);
-  },[center]);
+  },[{ center }]);
 
   const initializeMap = useCallback(
     (map) => {
