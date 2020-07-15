@@ -5,7 +5,7 @@ import ZoomControl from "mapbox-gl-controls/lib/zoom";
 
 import MapboxContext, {
   MapboxMapTransform,
-} from "../../contexts/mapboxContext";
+} from "../../contexts/MapboxContext";
 
 type MapboxMapProps = {
   token: string;

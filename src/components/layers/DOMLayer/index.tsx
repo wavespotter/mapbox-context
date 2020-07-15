@@ -1,5 +1,5 @@
 import React, { useContext, useCallback } from "react";
-import MapboxContext from "../../../contexts/mapboxContext";
+import MapboxContext from "../../../contexts/MapboxContext";
 
 type MapboxDOMLayerProps = {
   /** Geographic coordinates of the element. The component's children will
