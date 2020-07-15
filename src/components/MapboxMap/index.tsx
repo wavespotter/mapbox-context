@@ -21,7 +21,7 @@ type MapboxMapProps = {
     options?: mapboxgl.FitBoundsOptions;
   };
   transformRequest?: mapboxgl.TransformRequestFunction;
-  center?: [number, number];
+  center?: mapboxgl.LngLatLike;
 };
 
 /** A modern Mapbox React component using hooks and context
