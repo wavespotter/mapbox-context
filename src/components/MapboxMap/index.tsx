@@ -67,6 +67,10 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       if (fitBounds) {
         map?.fitBounds(fitBounds.bounds, fitBounds.options);
       }
+      // center will win if both center and fitBounds props are set
+      if (center) {
+        map?.setCenter(center);
+      }
       if (showControls) {
         map?.addControl(new ZoomControl(), "top-right");
       }
