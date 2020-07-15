@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
+import useDeepCompareEffect from 'use-deep-compare-effect';
 import mapboxgl from "mapbox-gl";
 
 import ZoomControl from "mapbox-gl-controls/lib/zoom";
-
 import MapboxContext, {
   MapboxMapTransform,
 } from "../../contexts/MapboxContext";
@@ -51,13 +51,13 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   const [transform, setTransform] = useState<MapboxMapTransform | null>(null);
 
   // Let the parent component overwrite the map bounds
-  useEffect( () => {
+  useDeepCompareEffect( () => {
     if (!map || !fitBounds) return;
     map.fitBounds(fitBounds.bounds, fitBounds.options);
   },[fitBounds]);
 
   // Let the parent component overwrite the map center
-  useEffect( () => {
+  useDeepCompareEffect( () => {
     if (!map || !center) return;
     map.setCenter(center);
   },[center]);
