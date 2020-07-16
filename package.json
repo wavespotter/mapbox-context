@@ -1,6 +1,6 @@
 {
   "name": "@sofarocean/mapbox-context",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A React wrapper for Mapbox GL JS built for the era of React Context and Hooks",
   "main": "build/index.js",
   "types": "build/index.d.ts",
