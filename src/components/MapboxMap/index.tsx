@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
+import useDeepCompareEffect from 'use-deep-compare-effect';
 import mapboxgl from "mapbox-gl";
 
 import ZoomControl from "mapbox-gl-controls/lib/zoom";
-
 import MapboxContext, {
   MapboxMapTransform,
-} from "../../contexts/mapboxContext";
+} from "../../contexts/MapboxContext";
 
 type MapboxMapProps = {
   token: string;
@@ -21,6 +21,7 @@ type MapboxMapProps = {
     options?: mapboxgl.FitBoundsOptions;
   };
   transformRequest?: mapboxgl.TransformRequestFunction;
+  center?: mapboxgl.LngLatLike;
 };
 
 /** A modern Mapbox React component using hooks and context
@@ -38,6 +39,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   scrollZoom = true,
   fitBounds,
   transformRequest,
+  center,
 }) => {
   let mapContainer = useRef<HTMLDivElement>(null);
 
@@ -48,16 +50,26 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   // Store map transform data in state so we can pass it to children
   const [transform, setTransform] = useState<MapboxMapTransform | null>(null);
 
-  // Let the parent component overrite the map bounds
-  usePropChangeEffect(fitBounds, () => {
+  // Let the parent component overwrite the map bounds
+  useDeepCompareEffect( () => {
     if (!map || !fitBounds) return;
     map.fitBounds(fitBounds.bounds, fitBounds.options);
-  });
+  },[{ fitBounds }]);
+
+  // Let the parent component overwrite the map center
+  useDeepCompareEffect( () => {
+    if (!map || !center) return;
+    map.setCenter(center);
+  },[{ center }]);
 
   const initializeMap = useCallback(
     (map) => {
       if (fitBounds) {
         map?.fitBounds(fitBounds.bounds, fitBounds.options);
+      }
+      // center will win if both center and fitBounds props are set
+      if (center) {
+        map?.setCenter(center);
       }
       if (showControls) {
         map?.addControl(new ZoomControl(), "top-right");
@@ -135,14 +147,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
     </>
   );
 };
-
-function usePropChangeEffect<T>(prop: T, onChange: (newValue: T) => void) {
-  const [oldPropValue, setOldPropValue] = useState<T>(prop);
-  if (prop !== oldPropValue) {
-    onChange(prop);
-    setOldPropValue(prop);
-  }
-}
 
 export default MapboxMap;
 export { MapboxContext };
