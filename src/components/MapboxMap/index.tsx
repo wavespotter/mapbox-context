@@ -52,7 +52,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
 
   // Let the parent component overwrite the map bounds
   useDeepCompareEffectNoCheck( () => {
-    if (!map || !fitBounds) return;
+      if (!map || !fitBounds) return;
     map.fitBounds(fitBounds.bounds, fitBounds.options);
   },[fitBounds]);
 
@@ -109,7 +109,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       map.remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, styleUrl, transformRequest, scrollZoom]);
+  }, [token, styleUrl, transformRequest, scrollZoom, fitBounds, center]);
 
   // Update center and zoom whenever it changes
   useEffect(() => {
