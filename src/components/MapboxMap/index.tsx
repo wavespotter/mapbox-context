@@ -75,7 +75,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         map?.addControl(new ZoomControl(), "top-right");
       }
     },
-    [showControls, fitBounds]
+    [showControls, fitBounds, center]
   );
 
   // Create a new Mapbox map instance whenver token or style URL prop changes
