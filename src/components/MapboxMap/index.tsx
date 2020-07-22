@@ -12,8 +12,6 @@ type MapboxMapProps = {
   styleUrl: string;
   width: string;
   height: string;
-  initialCenter?: [number, number];
-  initialZoom?: number;
   showControls?: boolean;
   scrollZoom?: boolean;
   fitBounds?: {
@@ -22,6 +20,7 @@ type MapboxMapProps = {
   };
   transformRequest?: mapboxgl.TransformRequestFunction;
   center?: mapboxgl.LngLatLike;
+  zoom?: number;
 };
 
 /** A modern Mapbox React component using hooks and context
@@ -33,13 +32,12 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   width,
   height,
   children,
-  initialCenter,
-  initialZoom,
   showControls,
   scrollZoom = true,
   fitBounds,
   transformRequest,
   center,
+  zoom
 }) => {
   let mapContainer = useRef<HTMLDivElement>(null);
 
@@ -62,67 +60,68 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
     map.setCenter(center);
   },[center]);
 
-  const initializeMap = useCallback(
-    (map) => {
-      if (fitBounds) {
-        map?.fitBounds(fitBounds.bounds, fitBounds.options);
-      }
-      // center will win if both center and fitBounds props are set
-      if (center) {
-        map?.setCenter(center);
-      }
-      if (showControls) {
-        map?.addControl(new ZoomControl(), "top-right");
-      }
-    },
-    [showControls, fitBounds, center]
-  );
-
-  // Create a new Mapbox map instance whenver token or style URL prop changes
+  // Create a new Mapbox map instance whenever token or style URL prop changes
   useEffect(() => {
-    mapboxgl.accessToken = token;
-    const map = new mapboxgl.Map({
+    const newMap = new mapboxgl.Map({
       container: mapContainer.current ?? "",
       style: styleUrl,
       attributionControl: false,
       transformRequest,
+      accessToken: token
     });
-
-    map.on("load", () => {
-      setMap(map);
-      initializeMap(map);
+    newMap.on("load", () => {
+      setMap(newMap);
     });
-
-    map.on("render", () => {
-      const center = map.getCenter();
+    newMap.on("render", () => {
+      const center = newMap.getCenter();
       setTransform({
-        zoom: map.getZoom(),
+        zoom: newMap.getZoom(),
         center: [center.lng, center.lat],
-        bearing: map.getBearing(),
-        pitch: map.getPitch(),
+        bearing: newMap.getBearing(),
+        pitch: newMap.getPitch(),
       });
     });
-
-    if (!scrollZoom) map.scrollZoom.disable();
-
     return () => {
-      map.remove();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, styleUrl, transformRequest, scrollZoom, fitBounds, center]);
-
-  // Update center and zoom whenever it changes
-  useEffect(() => {
-    if (map && !initialized) {
-      if (initialCenter) {
-        map.setCenter(initialCenter);
-      }
-      if (initialZoom !== undefined) {
-        map.setZoom(initialZoom);
-      }
-      setInitialized(true);
+      newMap.remove()
     }
-  }, [map, initialCenter, initialZoom, initialized]);
+  }, [token, styleUrl, transformRequest]);
+
+  // Keep map up to date with the props
+  useDeepCompareEffectNoCheck(() => {
+    if (center) {
+      map?.setCenter(center);
+    }
+  }, [center, map]);
+
+  useDeepCompareEffectNoCheck(() => {
+    if (fitBounds) {
+      map?.fitBounds(fitBounds.bounds, fitBounds.options);
+    }
+  }, [fitBounds, map]);
+
+  useEffect(() => {
+    if (zoom !== undefined) {
+      map?.setZoom(zoom);
+    }
+  }, [zoom, map]);
+
+  useEffect(() => {
+    if (scrollZoom) {
+      map?.scrollZoom.enable();
+    } else {
+      map?.scrollZoom.disable();
+    }
+  }, [scrollZoom, map]);
+
+  const zoomControl = useRef<any>();
+  useEffect(() => {
+    if (showControls) {
+      zoomControl.current = new ZoomControl('top-right');
+      map?.addControl(zoomControl.current);
+    } else {
+      if (zoomControl.current) map?.removeControl(zoomControl.current);
+    }
+  }, [showControls, map]);
 
   const containerBounds = mapContainer.current?.getBoundingClientRect();
 
