@@ -36,7 +36,10 @@ const RasterLayer: React.FC<{
         type: "raster",
         minzoom,
         maxzoom,
-        paint: paintOptions ?? {},
+        paint:
+          opacity !== undefined
+            ? { ...(paintOptions ?? {}), "raster-opacity": opacity }
+            : paintOptions ?? {},
         layout: layoutOptions ?? {},
       },
       beforeLayer
