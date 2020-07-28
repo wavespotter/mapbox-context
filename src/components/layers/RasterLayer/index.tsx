@@ -3,7 +3,7 @@ import MapboxContext from "../../../contexts/MapboxContext";
 import useDeepCompareEffect from "use-deep-compare-effect";
 
 const RasterLayer: React.FC<{
-  sourceOptions: mapboxgl.RasterSource;
+  sourceOptions: mapboxgl.RasterSource | mapboxgl.ImageSourceRaw;
   minzoom?: number;
   maxzoom?: number;
   id: string;
@@ -36,7 +36,10 @@ const RasterLayer: React.FC<{
         type: "raster",
         minzoom,
         maxzoom,
-        paint: paintOptions ?? {},
+        paint:
+          opacity !== undefined
+            ? { ...(paintOptions ?? {}), "raster-opacity": opacity }
+            : paintOptions ?? {},
         layout: layoutOptions ?? {},
       },
       beforeLayer
