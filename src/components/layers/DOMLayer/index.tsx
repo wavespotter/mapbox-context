@@ -113,8 +113,6 @@ const MapboxDOMLayer: React.FC<MapboxDOMLayerProps> = ({
                           ${center ? "translate(-50%, -50%)" : ""}`,
             }}
             onWheel={!trapScroll ? scrollHandler : undefined}
-            onMouseDown={!trapMouse ? pointerHandler : undefined}
-            onMouseUp={!trapMouse ? pointerHandler : undefined}
             onPointerDown={!trapMouse ? pointerHandler : undefined}
             onPointerUp={!trapMouse ? pointerHandler : undefined}
           >
