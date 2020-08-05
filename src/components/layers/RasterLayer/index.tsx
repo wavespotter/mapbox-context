@@ -46,10 +46,10 @@ const RasterLayer: React.FC<{
     );
 
     return () => {
-      if (map) {
+      try {
         map.removeLayer(id);
         map.removeSource(id);
-      }
+      } catch (e) {}
     };
   }, [
     sourceOptions,
