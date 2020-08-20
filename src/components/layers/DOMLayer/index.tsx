@@ -106,11 +106,11 @@ const MapboxDOMLayer: React.FC<MapboxDOMLayerProps> = ({
             key={`copy-${i}`}
             style={{
               position: "absolute",
-              transform: `translate(${p.x}px,  ${p.y}px)
+              transform: `${center ? "translate(-50%, -50%)" : ""}
+                          translate(${p.x}px,  ${p.y}px)
                           ${pitch ? `rotateX(${pitch}deg)` : ""}
                           ${rotation ? `rotateZ(${rotation}deg)` : ""}
-                          ${scaleFactor !== 1 ? `scale(${scaleFactor})` : ""} 
-                          ${center ? "translate(-50%, -50%)" : ""}`,
+                          ${scaleFactor !== 1 ? `scale(${scaleFactor})` : ""}`,
             }}
             onWheel={!trapScroll ? scrollHandler : undefined}
             onPointerDown={!trapMouse ? pointerHandler : undefined}
