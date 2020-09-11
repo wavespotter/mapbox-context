@@ -21,6 +21,8 @@ type MapboxMapProps = {
   transformRequest?: mapboxgl.TransformRequestFunction;
   center?: mapboxgl.LngLatLike;
   zoom?: number;
+  dragRotate?: boolean;
+  touchZoomRotate?: boolean | { enableRotation: boolean};
 };
 
 /** A modern Mapbox React component using hooks and context
@@ -37,7 +39,9 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   fitBounds,
   transformRequest,
   center,
-  zoom
+  zoom,
+  dragRotate = true,
+  touchZoomRotate = true,
 }) => {
   let mapContainer = useRef<HTMLDivElement>(null);
 
@@ -111,6 +115,30 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       map?.scrollZoom.disable();
     }
   }, [scrollZoom, map]);
+
+  useEffect(() => {
+    if (dragRotate) {
+      map?.dragRotate.enable();
+    } else {
+      map?.dragRotate.disable();
+    }
+  }, [dragRotate, map]);
+
+  useDeepCompareEffectNoCheck(() => {
+    if (!!touchZoomRotate) {
+      map?.touchZoomRotate.enable();
+      map?.touchZoomRotate.enableRotation();
+      if(touchZoomRotate instanceof Object){
+        if (touchZoomRotate.enableRotation){
+          map?.touchZoomRotate.enableRotation();
+        } else {
+          map?.touchZoomRotate.disableRotation();
+        }
+      }
+    } else {
+      map?.touchZoomRotate.disable();
+    }
+  }, [touchZoomRotate, map]);
 
   const zoomControl = useRef<any>();
   useEffect(() => {
