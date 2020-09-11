@@ -23,6 +23,7 @@ type MapboxMapProps = {
   zoom?: number;
   dragRotate?: boolean;
   touchZoomRotate?: boolean | { enableRotation: boolean};
+  touchPitch?: boolean;
 };
 
 /** A modern Mapbox React component using hooks and context
@@ -42,6 +43,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   zoom,
   dragRotate = true,
   touchZoomRotate = true,
+  touchPitch = true,
 }) => {
   let mapContainer = useRef<HTMLDivElement>(null);
 
@@ -139,6 +141,14 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       map?.touchZoomRotate.disable();
     }
   }, [touchZoomRotate, map]);
+
+  useEffect(() => {
+    if (touchPitch) {
+      map?.touchPitch.enable();
+    } else {
+      map?.touchPitch.disable();
+    }
+  }, [touchPitch, map]);
 
   const zoomControl = useRef<any>();
   useEffect(() => {
