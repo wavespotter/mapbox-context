@@ -21,10 +21,13 @@ type MapboxMapProps = {
   transformRequest?: mapboxgl.TransformRequestFunction;
   center?: mapboxgl.LngLatLike;
   zoom?: number;
+  dragRotate?: boolean;
+  touchZoomRotate?: boolean | { enableRotation: boolean};
+  touchPitch?: boolean;
 };
 
 /** A modern Mapbox React component using hooks and context
- *  that supports composeable, declarative data layers
+ *  that supports composable, declarative data layers
  */
 const MapboxMap: React.FC<MapboxMapProps> = ({
   token,
@@ -37,13 +40,15 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   fitBounds,
   transformRequest,
   center,
-  zoom
+  zoom,
+  dragRotate = true,
+  touchZoomRotate = true,
+  touchPitch = true,
 }) => {
   let mapContainer = useRef<HTMLDivElement>(null);
 
   // Store the current Mapbox map instance in component state
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
-  const [initialized, setInitialized] = useState(false);
 
   // Store map transform data in state so we can pass it to children
   const [transform, setTransform] = useState<MapboxMapTransform | null>(null);
@@ -112,6 +117,38 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       map?.scrollZoom.disable();
     }
   }, [scrollZoom, map]);
+
+  useEffect(() => {
+    if (dragRotate) {
+      map?.dragRotate.enable();
+    } else {
+      map?.dragRotate.disable();
+    }
+  }, [dragRotate, map]);
+
+  useDeepCompareEffectNoCheck(() => {
+    if (!!touchZoomRotate) {
+      map?.touchZoomRotate.enable();
+      map?.touchZoomRotate.enableRotation();
+      if(touchZoomRotate instanceof Object){
+        if (touchZoomRotate.enableRotation){
+          map?.touchZoomRotate.enableRotation();
+        } else {
+          map?.touchZoomRotate.disableRotation();
+        }
+      }
+    } else {
+      map?.touchZoomRotate.disable();
+    }
+  }, [touchZoomRotate, map]);
+
+  useEffect(() => {
+    if (touchPitch) {
+      map?.touchPitch.enable();
+    } else {
+      map?.touchPitch.disable();
+    }
+  }, [touchPitch, map]);
 
   const zoomControl = useRef<any>();
   useEffect(() => {
