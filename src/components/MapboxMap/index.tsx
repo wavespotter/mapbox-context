@@ -24,7 +24,7 @@ type MapboxMapProps = {
 };
 
 /** A modern Mapbox React component using hooks and context
- *  that supports composeable, declarative data layers
+ *  that supports composable, declarative data layers
  */
 const MapboxMap: React.FC<MapboxMapProps> = ({
   token,
