@@ -43,7 +43,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
 
   // Store the current Mapbox map instance in component state
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
-  const [initialized, setInitialized] = useState(false);
 
   // Store map transform data in state so we can pass it to children
   const [transform, setTransform] = useState<MapboxMapTransform | null>(null);
