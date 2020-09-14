@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect';
+import { useDeepCompareEffectNoCheck } from "use-deep-compare-effect";
 import mapboxgl from "mapbox-gl";
 
 import ZoomControl from "mapbox-gl-controls/lib/zoom";
@@ -7,7 +7,7 @@ import MapboxContext, {
   MapboxMapTransform,
 } from "../../contexts/MapboxContext";
 
-type MapboxMapProps = {
+export type MapboxMapProps = {
   token: string;
   styleUrl: string;
   width: string;
@@ -22,7 +22,7 @@ type MapboxMapProps = {
   center?: mapboxgl.LngLatLike;
   zoom?: number;
   dragRotate?: boolean;
-  touchZoomRotate?: boolean | { enableRotation: boolean};
+  touchZoomRotate?: boolean | { enableRotation: boolean };
   touchPitch?: boolean;
 };
 
@@ -35,7 +35,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   width,
   height,
   children,
-  showControls,
+  showControls = false,
   scrollZoom = true,
   fitBounds,
   transformRequest,
@@ -54,16 +54,16 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   const [transform, setTransform] = useState<MapboxMapTransform | null>(null);
 
   // Let the parent component overwrite the map bounds
-  useDeepCompareEffectNoCheck( () => {
-      if (!map || !fitBounds) return;
+  useDeepCompareEffectNoCheck(() => {
+    if (!map || !fitBounds) return;
     map.fitBounds(fitBounds.bounds, fitBounds.options);
-  },[fitBounds]);
+  }, [fitBounds]);
 
   // Let the parent component overwrite the map center
-  useDeepCompareEffectNoCheck( () => {
+  useDeepCompareEffectNoCheck(() => {
     if (!map || !center) return;
     map.setCenter(center);
-  },[center]);
+  }, [center]);
 
   // Create a new Mapbox map instance whenever token or style URL prop changes
   useEffect(() => {
@@ -72,7 +72,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       style: styleUrl,
       attributionControl: false,
       transformRequest,
-      accessToken: token
+      accessToken: token,
     });
     newMap.on("load", () => {
       setMap(newMap);
@@ -87,8 +87,8 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       });
     });
     return () => {
-      newMap.remove()
-    }
+      newMap.remove();
+    };
   }, [token, styleUrl, transformRequest]);
 
   // Keep map up to date with the props
@@ -130,8 +130,8 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
     if (!!touchZoomRotate) {
       map?.touchZoomRotate.enable();
       map?.touchZoomRotate.enableRotation();
-      if(touchZoomRotate instanceof Object){
-        if (touchZoomRotate.enableRotation){
+      if (touchZoomRotate instanceof Object) {
+        if (touchZoomRotate.enableRotation) {
           map?.touchZoomRotate.enableRotation();
         } else {
           map?.touchZoomRotate.disableRotation();
@@ -153,7 +153,8 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   const zoomControl = useRef<any>();
   useEffect(() => {
     if (showControls) {
-      zoomControl.current = new ZoomControl('top-right');
+      zoomControl.current = new ZoomControl("top-right");
+
       map?.addControl(zoomControl.current);
     } else {
       if (zoomControl.current) map?.removeControl(zoomControl.current);
