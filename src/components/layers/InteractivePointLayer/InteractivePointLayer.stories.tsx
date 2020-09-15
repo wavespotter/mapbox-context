@@ -99,20 +99,15 @@ const InteractivePointsStateManager: Story<
   const handleDrag = useCallback(
     (
       id: string | number,
+      newLocation: { latitude: number; longitude: number },
       offset: mapboxgl.Point,
       e: mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent
     ) => {
       if (!map) return;
 
-      // Move the point to the current pointer position minus the captured offset
-      const pointerProjected = map.project(e.lngLat);
-      const offsetLngLat = map.unproject(pointerProjected.sub(offset));
+      // Move the point to the current pointer position
       setPoints((_points) =>
-        _points.map((p) =>
-          p.id !== id
-            ? p
-            : { ...p, latitude: offsetLngLat.lat, longitude: offsetLngLat.lng }
-        )
+        _points.map((p) => (p.id !== id ? p : { ...p, ...newLocation }))
       );
     },
     [map]

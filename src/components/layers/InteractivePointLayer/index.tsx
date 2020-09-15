@@ -52,6 +52,7 @@ export type InteractivePointLayerProps = PointLayerProps & {
   ) => void;
   onDrag?: (
     id: string | number,
+    newCoordinates: { longitude: number; latitude: number },
     offset: mapboxgl.Point,
     e: mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent
   ) => void;
@@ -142,7 +143,16 @@ const InteractivePointLayer: React.FC<InteractivePointLayerProps> = (props) => {
       }
       // Fire a drag event if currently dragging anything
       if (dragging.current !== null) {
-        onDrag?.(dragging.current.pointID, dragging.current.offset, e);
+        const pointerProjected = map.project(e.lngLat);
+        const offsetLngLat = map.unproject(
+          pointerProjected.sub(dragging.current.offset)
+        );
+        onDrag?.(
+          dragging.current.pointID,
+          { longitude: offsetLngLat.lng, latitude: offsetLngLat.lat },
+          dragging.current.offset,
+          e
+        );
       }
     };
 
