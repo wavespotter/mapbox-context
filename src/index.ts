@@ -5,6 +5,8 @@ import LineLayer from "./components/layers/LineLayer";
 import RasterLayer from "./components/layers/RasterLayer";
 import CustomLayer from "./components/layers/CustomLayer";
 import MapboxMapContext from "./contexts/MapboxContext";
+import PointLayer from "./components/layers/PointLayer";
+import InteractivePointLayer from "./components/layers/InteractivePointLayer";
 
 import useMapEvent from "./hooks/useMapEvent";
 
@@ -14,6 +16,8 @@ export {
   LineLayer,
   RasterLayer,
   CustomLayer,
+  PointLayer,
+  InteractivePointLayer,
   MapboxMapContext,
   useMapEvent,
 };
