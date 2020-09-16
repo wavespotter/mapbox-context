@@ -102,11 +102,11 @@ const InteractivePointLayer: React.FC<InteractivePointLayerProps> = (props) => {
     if (!map || pointLayerID === null) return;
     const handleClick: NativeMapEventHandler = (e) => {
       const id =
-        getPointsSortedByDistance(e)?.filter((f) => {
+        getPointsSortedByDistance(e)?.find((f) => {
           if (f.id === null) return false;
           const match = pointIndex[f.id];
           return match && match.clickable;
-        })[0]?.id ?? null;
+        })?.id ?? null;
       if (id === undefined || id === null) return;
 
       onClick?.(id, e);
@@ -117,11 +117,11 @@ const InteractivePointLayer: React.FC<InteractivePointLayerProps> = (props) => {
       if (dragging.current !== null) return;
       const sortedFeatures = getPointsSortedByDistance(e);
       const closestHoverableID =
-        sortedFeatures?.filter((f) => {
+        sortedFeatures?.find((f) => {
           if (f.id === null) return false;
           const match = pointIndex[f.id];
           return match && match.hoverable;
-        })[0]?.id ?? null;
+        })?.id ?? null;
 
       // Only fire hover events if the feature beneath the pointer has changed
       if (closestHoverableID !== lastHoverId.current) {
@@ -163,11 +163,11 @@ const InteractivePointLayer: React.FC<InteractivePointLayerProps> = (props) => {
       if (e.type === "touchstart" && dragging.current !== null) {
         return;
       }
-      const closestFeature = getPointsSortedByDistance(e)?.filter((f) => {
+      const closestFeature = getPointsSortedByDistance(e)?.find((f) => {
         if (f.id === null) return false;
         const match = pointIndex[f.id];
         return match && match.draggable;
-      })[0];
+      });
 
       const id = closestFeature?.id ?? null;
 
