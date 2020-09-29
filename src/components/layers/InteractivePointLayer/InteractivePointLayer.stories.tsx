@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useContext,
-} from "react";
+import React, { useState, useCallback, useContext } from "react";
 
 import { Story, Meta } from "@storybook/react/types-6-0";
 
@@ -14,7 +8,6 @@ import InteractivePointLayer, {
 } from ".";
 import MapDecorator from "../../../storybook-helpers/map-decorator";
 
-import spotterImg from "../../../storybook-helpers/assets/spotter.png";
 import { MapboxMapContext } from "../../..";
 import PointLayer from "../PointLayer";
 
@@ -87,21 +80,12 @@ const InteractivePointsStateManager: Story<
     }))
   );
 
-  const handleDragStart = useCallback(
-    (
-      id: string | number,
-      offset: mapboxgl.Point,
-      e: mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent
-    ) => {},
-    []
-  );
+  const handleDragStart = useCallback(() => {}, []);
   const handleDragEnd = useCallback(() => {}, []);
   const handleDrag = useCallback(
     (
       id: string | number,
-      newLocation: { latitude: number; longitude: number },
-      offset: mapboxgl.Point,
-      e: mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent
+      newLocation: { latitude: number; longitude: number }
     ) => {
       if (!map) return;
 
