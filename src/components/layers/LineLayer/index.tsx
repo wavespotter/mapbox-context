@@ -3,12 +3,17 @@ import { MapboxContext } from "../../MapboxMap";
 import { featureCollection, lineString, Position } from "@turf/helpers";
 import useMapLayer from "../../../hooks/useMapLayer";
 
-export type LineCoordinates = (Position | { latitude: number; longitude: number })[];
+export type LineCoordinates = (
+  | Position
+  | { latitude: number; longitude: number }
+)[];
 export type LineLayerProps = {
   lines:
     | {
         id: string | number;
-        coordinates: LineCoordinates,
+        coordinates: LineCoordinates;
+        properties: GeoJSON.GeoJsonProperties;
+      }[]
     | GeoJSON.FeatureCollection<GeoJSON.LineString | GeoJSON.MultiLineString>;
 
   style: {

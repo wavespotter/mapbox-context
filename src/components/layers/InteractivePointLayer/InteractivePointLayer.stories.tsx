@@ -26,6 +26,14 @@ const mockPoints = [
   { id: "D", latitude: -5, longitude: -5 },
   { id: "E", latitude: 0, longitude: 0 },
 ];
+
+const mockPointsB = [
+  { id: "F", latitude: -10.5, longitude: -10.5 },
+  { id: "G", latitude: -10.5, longitude: -5.5 },
+  { id: "H", latitude: -5.5, longitude: -10 },
+  { id: "I", latitude: -5.5, longitude: -5 },
+  { id: "J", latitude: 0.5, longitude: 0.5 },
+];
 const bigMockPointsList = [];
 for (let i = -180; i < 180; i += 5) {
   for (let j = -90; j < 90; j += 5) {
@@ -70,13 +78,18 @@ const InteractivePointsStateManager: Story<
   const [points, setPoints] = useState(
     props.points.map((p) => ({
       ...p,
-      clickable: true,
-      hoverable: true,
-      draggable: props.draggable ?? false,
+
       // TODO: The layers could be re-written to use Mapbox `featureState`
       // instead of setting GeoJSON properties
       // See: https://docs.mapbox.com/mapbox-gl-js/api/map/#map#setfeaturestate
-      properties: { selected: false, hovering: false },
+      properties: {
+        id: p.id,
+        selected: false,
+        hovering: false,
+        clickable: true,
+        hoverable: true,
+        draggable: props.draggable ?? false,
+      },
     }))
   );
 
@@ -165,6 +178,14 @@ const InteractivePointsStateManager: Story<
     />
   );
 };
+
+const Component = InteractivePointsStateManager as any;
+export const OverlappingLayers = () => (
+  <>
+    <Component points={mockPoints} />
+    <Component points={mockPointsB} />
+  </>
+);
 
 export const AFewPoints = InteractivePointsStateManager.bind({});
 AFewPoints.args = {
