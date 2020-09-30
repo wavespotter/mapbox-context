@@ -1,244 +1,234 @@
-export const foo = "";
-// import React, { useState, useEffect, useContext, useRef, useMemo } from "react";
+import React, { useState, useCallback, useContext } from "react";
 
-// import { MapboxContext } from "../../MapboxMap";
-// import LineLayer, { LineLayerProps, LineCoordinates } from "../LineLayer";
-// import { LngLat } from "mapbox-gl";
-// import {
-//   InteractiveBaseType,
-//   MapEventHandler,
-//   NativeMapEventHandler,
-// } from "../../../hooks/useMapInteractions";
+import { Story, Meta } from "@storybook/react/types-6-0";
 
-// export type InteractiveLineData = InteractiveBaseType & {
-//   coordinates: LineCoordinates;
-// };
+import InteractiveLineLayer, {
+  InteractiveLineLayerProps,
+  InteractiveLineData,
+} from ".";
+import MapDecorator from "../../../storybook-helpers/map-decorator";
 
-// export type InteractiveLineLayerProps = LineLayerProps & {
-//   lines: InteractiveLineData[];
+import { MapboxMapContext } from "../../..";
+import LineLayer from "../LineLayer";
 
-//   onClick?: MapEventHandler;
-//   onHoverEnter?: MapEventHandler;
-//   onHoverLeave?: MapEventHandler;
-// };
+export default {
+  title: "Interactive Line Layer",
+  component: InteractiveLineLayer,
+  argTypes: {},
+  args: {},
+  decorators: [MapDecorator()],
+} as Meta;
 
-// /** A controlled component that fires the appropriate callback for user events
-//  *  on an underlying line layer. Since this is a controlled component, it does
-//  *  not actually manage the hover state of each line or move lines as they
-//  *  are dragged— that responsibility is left up to a higher level component.
-//  */
-// const InteractiveLineLayer: React.FC<InteractiveLineLayerProps> = ({
-//   lines,
-//   onClick,
-//   onHoverEnter,
-//   onHoverLeave,
-// }) => {
-//   // Index lines by ID for fast lookup
-//   const lineIndex = useMemo(
-//     () =>
-//       lines.reduce((accum: Record<string, InteractiveLineData>, p) => {
-//         accum[p.id] = p;
-//         return accum;
-//       }, {}),
-//     [lines]
-//   );
+const mockLines = [
+  {
+    id: "A",
+    coordinates: [
+      [-27, -6],
+      [-21, 0],
+      [-15, -8],
+      [-9, -0],
+      [-3, -8],
+      [1, -1],
+      [8, -8],
+    ],
+    properties: {
+      color: "#ff55ff",
+    },
+  },
+  {
+    id: "B",
+    coordinates: [
+      [-22.4, 27.7],
+      [-26.2, 21.8],
+      [-27.8, 18.3],
+      [-27.9, 13.7],
+      [-26.2, 9.5],
+      [-22.7, 6.5],
+      [-18.7, 4.3],
+      [-14.2, 3.4],
+      [-9.8, 1.6],
+      [-8.8, -1.7],
+      [-9.8, -4.7],
+      [-10.6, -8.8],
+      [-13.2, -14],
+      [-17.9, -20.2],
+      [-17.7, -23.3],
+      [-15.3, -25.3],
+      [-9.4, -28.4],
+      [-6.1, -29.5],
+      [-1.1, -30.8],
+      [4.6, -31.2],
+      [8, -30.3],
+    ],
+    properties: {
+      color: "#55FF55",
+    },
+  },
+  {
+    id: "C",
+    coordinates: [
+      [-29.1, 5.2],
+      [-31.2, 2.3],
+      [-31.6, -2.8],
+      [-28.1, -4],
+      [-21.6, -4.2],
+      [-19.7, -0.9],
+      [-20, 1.9],
+      [-23.4, 3.8],
+      [-25.1, 3.8],
+      [-28.3, 2],
+      [-28.2, -1],
+      [-26.9, -2.2],
+      [-23.7, -2],
+      [-22.1, -0.6],
+      [-22.5, 0.8],
+      [-24.2, 1.9],
+      [-25.1, 1.5],
+      [-25.8, -0.2],
+      [-24.8, -0.4],
+      [-23.9, 0.2],
+    ],
+    properties: {
+      color: "#00DDDD",
+    },
+  },
+];
+const lineStyle: {
+  layout: mapboxgl.LineLayout;
+  paint: mapboxgl.LinePaint;
+} = {
+  layout: {},
+  paint: {
+    "line-opacity": ["case", ["get", "selected"], 1, 0.5],
+    "line-color": ["get", "color"],
+    "line-width": ["case", ["get", "hovering"], 8, 4],
+  },
+};
+// Big transparent lines to increase the touch area of lines
+const bigTransparentLineStyle: {
+  layout: mapboxgl.LineLayout;
+  paint: mapboxgl.LinePaint;
+} = {
+  layout: {},
+  paint: {
+    "line-color": "rgba(0,0,0,0)",
+    "line-width": 40,
+  },
+};
 
-//   // Keep track of the last feature we were hovering over to trigger separate
-//   // hoverEnter and hoverLeave events
-//   const lastHoverId = useRef<string | number | null>(null);
-//   const dragging = useRef<{
-//     pointID: string | number;
-//     offset: mapboxgl.Point;
-//   } | null>(null);
+const InteractiveLinesStateManager: Story<
+  InteractiveLineLayerProps & {
+    lines: InteractiveLineData[];
+    withBigTouchZones: boolean;
+  }
+> = (props) => {
+  const { map } = useContext(MapboxMapContext);
+  const [lines, setLines] = useState(
+    props.lines.map((p) => ({
+      ...p,
+      properties: {
+        ...p.properties,
+        id: p.id,
+        selected: false,
+        hovering: false,
+        clickable: true,
+        hoverable: true,
+        draggable: false,
+      },
+    }))
+  );
 
-//   // Flag set once the underlying point layer has been added to the map
-//   const [LineLayerID, setLineLayerID] = useState<string | null>(null);
-//   const { map } = useContext(MapboxContext);
+  const handleDragStart = useCallback(() => {}, []);
+  const handleDragEnd = useCallback(() => {}, []);
+  const handleDrag = useCallback(
+    (
+      id: string | number,
+      newLocation: { latitude: number; longitude: number }
+    ) => {
+      if (!map) return;
 
-//   // Set up event handlers
-//   useEffect(() => {
-//     if (!map || LineLayerID === null) return;
-//     const handleClick: NativeMapEventHandler = (e) => {
-//       const id =
-//         getPointsSortedByDistance(e)?.find((f) => {
-//           if (f.id === null) return false;
-//           const match = lineIndex[f.id];
-//           return match && match.clickable;
-//         })?.id ?? null;
-//       if (id === undefined || id === null) return;
+      // Move the point to the current pointer position
+      setLines((_lines) =>
+        _lines.map((p) => (p.id !== id ? p : { ...p, ...newLocation }))
+      );
+    },
+    [map]
+  );
 
-//       onClick?.(id, e);
-//     };
-//     // Handle hover events and drag events
-//     const handleMouseMove: NativeMapEventHandler = (e) => {
-//       // Don't do anything if we're currently dragging a point
-//       if (dragging.current !== null) return;
-//       const sortedFeatures = getPointsSortedByDistance(e);
-//       const closestHoverableID =
-//         sortedFeatures?.find((f) => {
-//           if (f.id === null) return false;
-//           const match = lineIndex[f.id];
-//           return match && match.hoverable;
-//         })?.id ?? null;
+  const handleClick = useCallback((id: string | number) => {
+    setLines((old) =>
+      old.map((o) =>
+        o.id === id
+          ? {
+              ...o,
+              properties: { ...o.properties, selected: !o.properties.selected },
+            }
+          : o
+      )
+    );
+  }, []);
 
-//       // Only fire hover events if the feature beneath the pointer has changed
-//       if (closestHoverableID !== lastHoverId.current) {
-//         if (lastHoverId.current !== null) {
-//           onHoverLeave?.(lastHoverId.current, e);
-//         }
+  const handleHoverEnter = useCallback((id: string | number) => {
+    setLines((old) =>
+      old.map((o) =>
+        o.id === id
+          ? {
+              ...o,
+              properties: { ...o.properties, hovering: true },
+            }
+          : o
+      )
+    );
+  }, []);
 
-//         if (closestHoverableID !== null) onHoverEnter?.(closestHoverableID, e);
-//         lastHoverId.current = closestHoverableID;
-//       }
-//     };
+  const handleHoverLeave = useCallback((id: string | number) => {
+    setLines((old) =>
+      old.map((o) =>
+        o.id === id
+          ? {
+              ...o,
+              properties: { ...o.properties, hovering: false },
+            }
+          : o
+      )
+    );
+  }, []);
 
-//     const handleDrag: NativeMapEventHandler<
-//       mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent
-//     > = (e) => {
-//       if ((e.originalEvent as TouchEvent).touches?.length > 1) {
-//         e.preventDefault();
-//         return;
-//       }
-//       // Fire a drag event if currently dragging anything
-//       if (dragging.current !== null) {
-//         const pointerProjected = map.project(e.lngLat);
-//         const offsetLngLat = map.unproject(
-//           pointerProjected.sub(dragging.current.offset)
-//         );
-//         onDrag?.(
-//           dragging.current.pointID,
-//           { longitude: offsetLngLat.lng, latitude: offsetLngLat.lat },
-//           dragging.current.offset,
-//           e
-//         );
-//       }
-//     };
+  return props.withBigTouchZones ? (
+    <>
+      <LineLayer lines={lines} style={lineStyle} />
+      <InteractiveLineLayer
+        lines={lines}
+        style={bigTransparentLineStyle}
+        onClick={handleClick}
+        onHoverEnter={handleHoverEnter}
+        onHoverLeave={handleHoverLeave}
+        onDrag={handleDrag}
+        onDragEnd={handleDragEnd}
+        onDragStart={handleDragStart}
+      />
+    </>
+  ) : (
+    <InteractiveLineLayer
+      lines={lines}
+      style={lineStyle}
+      onClick={handleClick}
+      onHoverEnter={handleHoverEnter}
+      onHoverLeave={handleHoverLeave}
+      onDrag={handleDrag}
+      onDragEnd={handleDragEnd}
+      onDragStart={handleDragStart}
+    />
+  );
+};
 
-//     const handleMouseDown: NativeMapEventHandler<
-//       mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent
-//     > = (e) => {
-//       // Don't handle a touchstart event if we're already dragging something
-//       if (e.type === "touchstart" && dragging.current !== null) {
-//         return;
-//       }
-//       const closestFeature = getPointsSortedByDistance(e)?.find((f) => {
-//         if (f.id === null) return false;
-//         const match = lineIndex[f.id];
-//         return match && match.draggable;
-//       });
+export const AFewLines = InteractiveLinesStateManager.bind({});
+AFewLines.args = {
+  lines: mockLines,
+};
 
-//       const id = closestFeature?.id ?? null;
-
-//       if (
-//         id === null ||
-//         !closestFeature ||
-//         closestFeature.geometry?.type !== "Point"
-//       )
-//         return;
-
-//       // Start a new drag event
-//       const pointProjected = map.project(
-//         closestFeature.geometry.coordinates as [number, number]
-//       );
-//       const pointerProjected = map.project(e.lngLat);
-//       const offset = pointerProjected.sub(pointProjected);
-
-//       dragging.current = { pointID: id, offset };
-
-//       onDragStart?.(id, offset, e);
-//       e.preventDefault();
-//     };
-
-//     const handleMouseUp = (e: any) => {
-//       if (dragging.current === null) return;
-//       onDragEnd?.(dragging.current.pointID, e);
-//       dragging.current = null;
-
-//       if (lastHoverId.current !== null) {
-//         onHoverLeave?.(lastHoverId.current, e);
-//         lastHoverId.current = null;
-//       }
-//     };
-
-//     // Events for click and hover handlers
-//     map.on("click", LineLayerID, handleClick);
-//     map.on("mousemove", LineLayerID, handleMouseMove);
-//     map.on("mouseleave", LineLayerID, handleMouseMove);
-
-//     // Events for drag handlers
-//     map.on("mousedown", LineLayerID, handleMouseDown);
-//     map.on("mousemove", handleDrag);
-//     map.on("mouseup", handleMouseUp);
-
-//     map.on("touchstart", LineLayerID, handleMouseDown);
-//     map.on("touchmove", handleDrag);
-//     map.on("touchend", handleMouseUp);
-//     map.on("touchcancel", handleMouseUp);
-
-//     // Make sure to capture pointerup events anywhere in the window
-//     window.addEventListener("pointerup", handleMouseUp);
-
-//     // Clean up events when we're done
-//     return () => {
-//       map.off("click", LineLayerID, handleClick);
-//       map.off("mousemove", LineLayerID, handleMouseMove);
-//       map.off("mouseleave", LineLayerID, handleMouseMove);
-
-//       map.off("mousedown", LineLayerID, handleMouseDown);
-//       map.off("mousemove", handleDrag);
-//       map.off("mouseup", handleMouseUp);
-
-//       map.off("touchstart", LineLayerID, handleMouseDown);
-//       map.off("touchmove", handleDrag);
-//       map.off("touchend", handleMouseUp);
-//       map.off("touchcancel", handleMouseUp);
-
-//       window.removeEventListener("pointerup", handleMouseUp);
-//     };
-//   }, [
-//     map,
-//     onClick,
-//     onDrag,
-//     onDragEnd,
-//     onDragStart,
-//     onHoverEnter,
-//     onHoverLeave,
-//     lineIndex,
-//     LineLayerID,
-//   ]);
-
-//   return <LineLayer {...props} onAdd={setLineLayerID} />;
-// };
-
-// /** Given a Mapbox `MapMouseEvent`, sort any point features that the event
-//  *  involves by their distance to the mouse in ascending order.
-//  *
-//  *  Mapbox doesn't have any native concept of event capturing, so the event it
-//  *  fires will list out all the features that are hit. We most likely only want
-//  *  to get the one closest to the mouse event.
-//  */
-// const getPointsSortedByDistance = (
-//   e: (mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent) & {
-//     features?: mapboxgl.MapboxGeoJSONFeature[] | undefined;
-//   } & mapboxgl.EventData
-// ) => {
-//   const features = e.features;
-//   if (!features) return null;
-//   const eventPoint = e.lngLat;
-
-//   return features
-//     .map((f) => ({
-//       ...f,
-//       id: (f.properties?.["id"] as number | string) ?? null,
-//       geometry: f.geometry, // This is a getter and needs to be manually copied
-//       distance:
-//         f.geometry.type === "Point"
-//           ? eventPoint.distanceTo(
-//               new LngLat(f.geometry.coordinates[0], f.geometry.coordinates[1])
-//             )
-//           : Infinity,
-//     }))
-//     .sort((a, b) => a.distance - b.distance);
-// };
-
-// export default InteractiveLineLayer;
+export const WithLargeInteractionZone = InteractiveLinesStateManager.bind({});
+WithLargeInteractionZone.args = {
+  lines: mockLines,
+  withBigTouchZones: true,
+};

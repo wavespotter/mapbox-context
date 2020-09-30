@@ -20,24 +20,29 @@ export default {
 } as Meta;
 
 const mockPoints = [
-  { id: "A", latitude: -10, longitude: -10 },
-  { id: "B", latitude: -10, longitude: -5 },
-  { id: "C", latitude: -5, longitude: -10 },
-  { id: "D", latitude: -5, longitude: -5 },
-  { id: "E", latitude: 0, longitude: 0 },
+  { id: "A", latitude: -10, longitude: -10, properties: {} },
+  { id: "B", latitude: -10, longitude: -5, properties: {} },
+  { id: "C", latitude: -5, longitude: -10, properties: {} },
+  { id: "D", latitude: -5, longitude: -5, properties: {} },
+  { id: "E", latitude: 0, longitude: 0, properties: {} },
 ];
 
 const mockPointsB = [
-  { id: "F", latitude: -10.5, longitude: -10.5 },
-  { id: "G", latitude: -10.5, longitude: -5.5 },
-  { id: "H", latitude: -5.5, longitude: -10 },
-  { id: "I", latitude: -5.5, longitude: -5 },
-  { id: "J", latitude: 0.5, longitude: 0.5 },
+  { id: "F", latitude: -10.5, longitude: -10.5, properties: {} },
+  { id: "G", latitude: -10.5, longitude: -5.5, properties: {} },
+  { id: "H", latitude: -5.5, longitude: -10, properties: {} },
+  { id: "I", latitude: -5.5, longitude: -5, properties: {} },
+  { id: "J", latitude: 0.5, longitude: 0.5, properties: {} },
 ];
 const bigMockPointsList = [];
 for (let i = -180; i < 180; i += 5) {
   for (let j = -90; j < 90; j += 5) {
-    bigMockPointsList.push({ id: `${i}-${j}`, latitude: j, longitude: i });
+    bigMockPointsList.push({
+      id: `${i}-${j}`,
+      latitude: j,
+      longitude: i,
+      properties: {},
+    });
   }
 }
 
@@ -78,10 +83,6 @@ const InteractivePointsStateManager: Story<
   const [points, setPoints] = useState(
     props.points.map((p) => ({
       ...p,
-
-      // TODO: The layers could be re-written to use Mapbox `featureState`
-      // instead of setting GeoJSON properties
-      // See: https://docs.mapbox.com/mapbox-gl-js/api/map/#map#setfeaturestate
       properties: {
         id: p.id,
         selected: false,
@@ -183,7 +184,7 @@ const Component = InteractivePointsStateManager as any;
 export const OverlappingLayers = () => (
   <>
     <Component points={mockPoints} />
-    <Component points={mockPointsB} />
+    <Component points={mockPointsB} priority={0} />
   </>
 );
 

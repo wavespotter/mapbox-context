@@ -1,25 +1,26 @@
-import { useRef, useEffect } from "react";
+import { useEffect } from "react";
 import { LngLat } from "mapbox-gl";
 
-export type InteractiveBaseType = {
-  /** Unique ID for this element that will be passed to all interaction event
-   *  handlers
+export type InteractiveLayerProps = {
+  /** Optional name of an "event handler pool". Only one callback per event pool
+   *  will be called for each underlying Mapbox event. By default, all layers
+   *  share the same global event pool, but if you have overlapping layers you
+   *  may wish to do your own event disambiguation.
    */
-  id: string | number;
+  eventHandlerPool?: string;
 
-  /** Flag indicating whether this element should respond to drag events */
-  draggable?: boolean;
-
-  /** Flag indicating whether this element should respond to click events */
-  clickable?: boolean;
-
-  /** Flag indicating whether this element should respond to hover events */
-  hoverable?: boolean;
-
-  /** Any data you want to make available to Mapbox style functions must go
-   *  in the `properties` key
+  /** Optional priority value for this layer within its event handler pool.
+   *  Lower priority values will be favored and become the target of events
+   *  before layers with a higher priority.
    */
-  properties?: GeoJSON.GeoJsonProperties;
+  eventHandlerPriority?: number;
+
+  onClick?: MapEventHandler;
+  onHoverEnter?: MapEventHandler;
+  onHoverLeave?: MapEventHandler;
+  onDragStart?: MapDragStartHandler;
+  onDrag?: MapDragHandler;
+  onDragEnd?: MapEventHandler;
 };
 
 export type MapEventHandler<TEvent = mapboxgl.MapMouseEvent> = (
@@ -52,7 +53,7 @@ type MapInteractionHandlerOptions = {
    *  is fired even if multiple elements on multiple layers are hit by a
    *  single interaction.
    */
-  interactionPool?: string;
+  eventHandlerPool?: string;
   /** When using an interaction pool, the `priority` is used to give
    *  preference to certain layers, regardless of their draw order. Higher
    *  priority values will claim the interaction event before elements with
@@ -77,7 +78,7 @@ type MapInteractionHandlerOptions = {
   onDragEnd?: MapEventHandler;
 };
 
-type InteractionPoolLayerDefinition = {
+type eventHandlerPoolLayerDefinition = {
   id: string;
   priority: number;
   onClick?: MapEventHandler;
@@ -89,7 +90,7 @@ type InteractionPoolLayerDefinition = {
 };
 
 class MapboxEventHandlerPool {
-  private layers: InteractionPoolLayerDefinition[];
+  private layers: eventHandlerPoolLayerDefinition[];
   private lastHoverFeature: mapboxgl.MapboxGeoJSONFeature | null = null;
   private dragging: {
     feature: mapboxgl.MapboxGeoJSONFeature;
@@ -294,7 +295,7 @@ class MapboxEventHandlerPool {
     }
   };
 
-  public addLayerListeners(listeners: InteractionPoolLayerDefinition) {
+  public addLayerListeners(listeners: eventHandlerPoolLayerDefinition) {
     // See if there's a match
     const matchIdx = this.layers.findIndex((l) => l.id === listeners.id);
     if (matchIdx === -1) {
@@ -384,11 +385,10 @@ function getEventHandlerPool(
   return eventHandlerPools.get(map)!.get(poolName)!;
 }
 
-let poolAutoId = 0;
 const useMapLayerInteractions = ({
   map,
   layerID,
-  interactionPool: _interactionPool,
+  eventHandlerPool: _eventHandlerPool,
   priority,
   onClick,
   onHoverEnter,
@@ -397,16 +397,14 @@ const useMapLayerInteractions = ({
   onDrag,
   onDragEnd,
 }: MapInteractionHandlerOptions) => {
-  const poolId = useRef(poolAutoId++);
-  let interactionPool = _interactionPool;
-  //   if (!_interactionPool) interactionPool = `auto-pool-${poolId.current}`;
-  if (!_interactionPool) interactionPool = `shared-event-pool`;
+  let eventHandlerPool = _eventHandlerPool;
+  if (!_eventHandlerPool) eventHandlerPool = `shared-event-pool`;
 
   // Update the interaction pool whenever the parameters to this hook change
   useEffect(() => {
-    if (!map || !interactionPool || !layerID) return;
+    if (!map || !eventHandlerPool || !layerID) return;
 
-    const pool = getEventHandlerPool(map, interactionPool);
+    const pool = getEventHandlerPool(map, eventHandlerPool);
 
     pool.addLayerListeners({
       id: layerID,
@@ -424,7 +422,7 @@ const useMapLayerInteractions = ({
     };
   }, [
     layerID,
-    interactionPool,
+    eventHandlerPool,
     map,
     priority,
     onClick,
