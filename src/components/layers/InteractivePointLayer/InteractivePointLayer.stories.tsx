@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useContext,
-} from "react";
+import React, { useState, useCallback, useContext } from "react";
 
 import { Story, Meta } from "@storybook/react/types-6-0";
 
@@ -14,7 +8,6 @@ import InteractivePointLayer, {
 } from ".";
 import MapDecorator from "../../../storybook-helpers/map-decorator";
 
-import spotterImg from "../../../storybook-helpers/assets/spotter.png";
 import { MapboxMapContext } from "../../..";
 import PointLayer from "../PointLayer";
 
@@ -27,16 +20,29 @@ export default {
 } as Meta;
 
 const mockPoints = [
-  { id: "A", latitude: -10, longitude: -10 },
-  { id: "B", latitude: -10, longitude: -5 },
-  { id: "C", latitude: -5, longitude: -10 },
-  { id: "D", latitude: -5, longitude: -5 },
-  { id: "E", latitude: 0, longitude: 0 },
+  { id: "A", latitude: -10, longitude: -10, properties: {} },
+  { id: "B", latitude: -10, longitude: -5, properties: {} },
+  { id: "C", latitude: -5, longitude: -10, properties: {} },
+  { id: "D", latitude: -5, longitude: -5, properties: {} },
+  { id: "E", latitude: 0, longitude: 0, properties: {} },
+];
+
+const mockPointsB = [
+  { id: "F", latitude: -10.5, longitude: -10.5, properties: {} },
+  { id: "G", latitude: -10.5, longitude: -5.5, properties: {} },
+  { id: "H", latitude: -5.5, longitude: -10, properties: {} },
+  { id: "I", latitude: -5.5, longitude: -5, properties: {} },
+  { id: "J", latitude: 0.5, longitude: 0.5, properties: {} },
 ];
 const bigMockPointsList = [];
 for (let i = -180; i < 180; i += 5) {
   for (let j = -90; j < 90; j += 5) {
-    bigMockPointsList.push({ id: `${i}-${j}`, latitude: j, longitude: i });
+    bigMockPointsList.push({
+      id: `${i}-${j}`,
+      latitude: j,
+      longitude: i,
+      properties: {},
+    });
   }
 }
 
@@ -77,31 +83,23 @@ const InteractivePointsStateManager: Story<
   const [points, setPoints] = useState(
     props.points.map((p) => ({
       ...p,
-      clickable: true,
-      hoverable: true,
-      draggable: props.draggable ?? false,
-      // TODO: The layers could be re-written to use Mapbox `featureState`
-      // instead of setting GeoJSON properties
-      // See: https://docs.mapbox.com/mapbox-gl-js/api/map/#map#setfeaturestate
-      properties: { selected: false, hovering: false },
+      properties: {
+        id: p.id,
+        selected: false,
+        hovering: false,
+        clickable: true,
+        hoverable: true,
+        draggable: props.draggable ?? false,
+      },
     }))
   );
 
-  const handleDragStart = useCallback(
-    (
-      id: string | number,
-      offset: mapboxgl.Point,
-      e: mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent
-    ) => {},
-    []
-  );
+  const handleDragStart = useCallback(() => {}, []);
   const handleDragEnd = useCallback(() => {}, []);
   const handleDrag = useCallback(
     (
       id: string | number,
-      newLocation: { latitude: number; longitude: number },
-      offset: mapboxgl.Point,
-      e: mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent
+      newLocation: { latitude: number; longitude: number }
     ) => {
       if (!map) return;
 
@@ -181,6 +179,14 @@ const InteractivePointsStateManager: Story<
     />
   );
 };
+
+const Component = InteractivePointsStateManager as any;
+export const OverlappingLayers = () => (
+  <>
+    <Component points={mockPoints} />
+    <Component points={mockPointsB} priority={0} />
+  </>
+);
 
 export const AFewPoints = InteractivePointsStateManager.bind({});
 AFewPoints.args = {

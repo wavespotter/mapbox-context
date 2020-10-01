@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useRef, useMemo } from "react";
 import { MapboxContext } from "../../MapboxMap";
 import { featureCollection, point } from "@turf/helpers";
-import useDeepCompareEffect from "use-deep-compare-effect";
 import useSymbolImageLoader from "./use-symbol-image-loader";
+import useMapLayer from "../../../hooks/useMapLayer";
 
 export type PointLayerProps = {
   points: {
@@ -52,76 +52,24 @@ const PointLayer: React.FC<PointLayerProps> = ({
 
   const { map } = useContext(MapboxContext);
 
+  // Load images for symbol layers if necessary
   useSymbolImageLoader(map, symbolImages);
 
-  useEffect(() => {
-    if (!map) return;
-    // Start with a blank source
-    map.addSource(id.current, {
-      type: "geojson",
-      data: { type: "FeatureCollection", features: [] },
-    });
+  // Create a geojson object for the source data
+  const geojson = useMemo(
+    () =>
+      featureCollection(
+        points.map((p) =>
+          point([p.longitude, p.latitude], { ...p.properties, id: p.id })
+        )
+      ),
+    [points]
+  );
 
-    map.addLayer({
-      id: id.current,
-      paint: style.paint,
-      layout: style.layout,
-      source: id.current,
-      type,
-    });
+  // This hook handles creating and updating layers on the Mapbox map for us
+  useMapLayer(map, id.current, type, geojson, style, onAdd);
 
-    onAdd?.(id.current);
-
-    return () => {
-      try {
-        map.removeLayer(id.current);
-        map.removeSource(id.current);
-      } catch (e) {
-        // Map was already un-mounted;
-      }
-    };
-    // Ignore changes to style — they will be updated separately next
-    // eslint-disable-next-line
-  }, [map, id, type]);
-
-  // Update style whenever it changes
-  useDeepCompareEffect(() => {
-    if (!map) return;
-    // Copy over paint and layout properties one by one because that's the way
-    // Mapbox rolls.
-    for (const prop in style.paint) {
-      map.setPaintProperty(
-        id.current,
-        prop,
-        style.paint[prop as keyof typeof style.paint]
-      );
-    }
-    for (const prop in style.layout) {
-      map.setLayoutProperty(
-        id.current,
-        prop,
-        style.layout[prop as keyof typeof style.layout]
-      );
-    }
-  }, [map, style]);
-
-  // Set data on initial load and whenever it changes
-  useEffect(() => {
-    if (!map) return;
-    // Create GeoJSON object
-    const geojson = featureCollection(
-      points.map((p) =>
-        point([p.longitude, p.latitude], { ...p.properties, id: p.id })
-      )
-    );
-
-    const source = map?.getSource(id.current);
-    if (source?.type !== "geojson") {
-      console.warn("Source should be geojson. Cannot set data.");
-    } else {
-      source.setData(geojson);
-    }
-  }, [map, points]);
+  // No DOM output
   return null;
 };
 
