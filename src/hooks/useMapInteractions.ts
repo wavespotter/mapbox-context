@@ -185,19 +185,21 @@ class MapboxEventHandlerPool {
     // Only fire hover events if the feature beneath the pointer has changed
     if (
       highestPriorityHoverableFeature?.properties?.id !==
-      this.lastHoverFeature?.properties?.id
+        this.lastHoverFeature?.properties?.id ||
+      highestPriorityHoverableFeature?.layer.id !==
+        this.lastHoverFeature?.layer.id
     ) {
       // Call the appropriate layer's registered onHoverLeave handler
-      if (!!this.lastHoverFeature?.properties?.id) {
+      if ((this.lastHoverFeature?.properties?.id ?? null) !== null) {
         this.layers
           .find((l) => l.id === this.lastHoverFeature?.layer.id)
-          ?.onHoverLeave?.(this.lastHoverFeature.properties?.id, e);
+          ?.onHoverLeave?.(this.lastHoverFeature?.properties?.id!, e);
       }
 
-      if (!!highestPriorityHoverableFeature?.properties?.id) {
+      if ((highestPriorityHoverableFeature?.properties?.id ?? null) !== null) {
         this.layers
-          .find((l) => l.id === highestPriorityHoverableFeature.layer.id)
-          ?.onHoverEnter?.(highestPriorityHoverableFeature.properties?.id, e);
+          .find((l) => l.id === highestPriorityHoverableFeature?.layer.id)
+          ?.onHoverEnter?.(highestPriorityHoverableFeature?.properties?.id, e);
       }
       this.lastHoverFeature = highestPriorityHoverableFeature;
     }

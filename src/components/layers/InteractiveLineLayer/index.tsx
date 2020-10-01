@@ -6,6 +6,16 @@ import useMapLayerInteractions, {
   InteractiveLayerProps,
 } from "../../../hooks/useMapInteractions";
 
+type InteractiveLineProperties = {
+  /** Flag indicating whether this point should respond to drag events */
+  draggable?: boolean;
+
+  /** Flag indicating whether this point should respond to click events */
+  clickable?: boolean;
+
+  /** Flag indicating whether this point should respond to hover events */
+  hoverable?: boolean;
+};
 export type InteractiveLineData = {
   /** Unique ID for this point that will be passed to all interaction event
    *  handlers
@@ -17,21 +27,17 @@ export type InteractiveLineData = {
   /** Any data you want to make available to Mapbox style functions must go
    *  in the `properties` key
    */
-  properties: GeoJSON.GeoJsonProperties & {
-    /** Flag indicating whether this point should respond to drag events */
-    draggable?: boolean;
-
-    /** Flag indicating whether this point should respond to click events */
-    clickable?: boolean;
-
-    /** Flag indicating whether this point should respond to hover events */
-    hoverable?: boolean;
-  };
+  properties: GeoJSON.GeoJsonProperties & InteractiveLineProperties;
 };
 
 export type InteractiveLineLayerProps = LineLayerProps &
   InteractiveLayerProps & {
-    lines: InteractiveLineData[];
+    lines:
+      | InteractiveLineData[]
+      | GeoJSON.FeatureCollection<
+          GeoJSON.LineString | GeoJSON.MultiLineString,
+          InteractiveLineProperties
+        >;
   };
 
 /** A controlled component that fires the appropriate callback for user events
