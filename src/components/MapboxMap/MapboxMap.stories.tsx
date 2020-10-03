@@ -34,8 +34,8 @@ WithControls.args = {
   showControls: true,
 };
 
-export const InteractionsDiabled = Template.bind({});
-InteractionsDiabled.args = {
+export const InteractionsDisabled = Template.bind({});
+InteractionsDisabled.args = {
   scrollZoom: false,
   dragRotate: false,
   touchZoomRotate: false,
