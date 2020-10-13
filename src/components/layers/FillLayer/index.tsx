@@ -1,29 +1,24 @@
 import React, { useContext, useRef, useMemo } from "react";
 import { MapboxContext } from "../../MapboxMap";
-import { featureCollection, lineString, Position } from "@turf/helpers";
+import { featureCollection, polygon, Position } from "@turf/helpers";
 import useMapLayer from "../../../hooks/useMapLayer";
 
-export type LineCoordinates = (
+export type PolygonRingCoordinates = (
   | Position
   | { latitude: number; longitude: number }
 )[];
-export type LineLayerProps = {
-  lines:
+export type FillLayerProps = {
+  polygons:
     | {
         id: string | number;
-        coordinates: LineCoordinates;
+        coordinates: PolygonRingCoordinates[];
         properties: GeoJSON.GeoJsonProperties;
       }[]
-    | GeoJSON.FeatureCollection<
-        | GeoJSON.LineString
-        | GeoJSON.MultiLineString
-        | GeoJSON.Polygon
-        | GeoJSON.MultiPolygon
-      >;
+    | GeoJSON.FeatureCollection<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
 
   style: {
-    layout: mapboxgl.LineLayout;
-    paint: mapboxgl.LinePaint;
+    layout: mapboxgl.FillLayout;
+    paint: mapboxgl.FillPaint;
   };
 
   /** Callback fired after the layer has been added to the map. Useful if you
@@ -37,13 +32,13 @@ export type LineLayerProps = {
 // Used to generate unique layer and source IDs if one is not provided
 let idIncrement = 0;
 
-const LineLayer: React.FC<LineLayerProps> = ({
-  lines,
+const FillLayer: React.FC<FillLayerProps> = ({
+  polygons,
   style,
   onAdd,
   id: _id,
 }) => {
-  const id = useRef(`line-layer-${++idIncrement}`);
+  const id = useRef(`fill-layer-${++idIncrement}`);
   if (_id) id.current = _id;
 
   const { map } = useContext(MapboxContext);
@@ -51,13 +46,15 @@ const LineLayer: React.FC<LineLayerProps> = ({
   // Create a geojson object for the source data
   const geojson = useMemo(
     () =>
-      "type" in lines
-        ? lines
+      "type" in polygons
+        ? polygons
         : featureCollection(
-            lines.map((p) =>
-              lineString(
-                p.coordinates.map((c) =>
-                  "longitude" in c ? [c.longitude, c.latitude] : c
+            polygons.map((p) =>
+              polygon(
+                p.coordinates.map((ring) =>
+                  ring.map((c) =>
+                    "longitude" in c ? [c.longitude, c.latitude] : c
+                  )
                 ),
                 {
                   ...p.properties,
@@ -66,14 +63,14 @@ const LineLayer: React.FC<LineLayerProps> = ({
               )
             )
           ),
-    [lines]
+    [polygons]
   );
 
   // This hook handles creating and updating layers on the Mapbox map for us
-  useMapLayer(map, id.current, "line", geojson, style, onAdd);
+  useMapLayer(map, id.current, "fill", geojson, style, onAdd);
 
   // No DOM output
   return null;
 };
 
-export default LineLayer;
+export default FillLayer;
