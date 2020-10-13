@@ -6,6 +6,7 @@ import CustomLayer from "./components/layers/CustomLayer";
 import MapboxMapContext from "./contexts/MapboxContext";
 import PointLayer from "./components/layers/PointLayer";
 import LineLayer from "./components/layers/LineLayer";
+import FillLayer from "./components/layers/FillLayer";
 import InteractivePointLayer from "./components/layers/InteractivePointLayer";
 import InteractiveLineLayer from "./components/layers/InteractiveLineLayer";
 
@@ -15,6 +16,7 @@ export {
   MapboxMap,
   DOMLayer,
   LineLayer,
+  FillLayer,
   RasterLayer,
   CustomLayer,
   PointLayer,
