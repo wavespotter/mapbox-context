@@ -7,17 +7,17 @@ import useMapLayerInteractions, {
 } from "../../../hooks/useMapInteractions";
 
 type InteractiveLineProperties = {
-  /** Flag indicating whether this point should respond to drag events */
+  /** Flag indicating whether this line should respond to drag events */
   draggable?: boolean;
 
-  /** Flag indicating whether this point should respond to click events */
+  /** Flag indicating whether this line should respond to click events */
   clickable?: boolean;
 
-  /** Flag indicating whether this point should respond to hover events */
+  /** Flag indicating whether this line should respond to hover events */
   hoverable?: boolean;
 };
 export type InteractiveLineData = {
-  /** Unique ID for this point that will be passed to all interaction event
+  /** Unique ID for this line that will be passed to all interaction event
    *  handlers
    */
   id: string | number;
@@ -42,7 +42,7 @@ export type InteractiveLineLayerProps = LineLayerProps &
 
 /** A controlled component that fires the appropriate callback for user events
  *  on an underlying line layer. Since this is a controlled component, it does
- *  not actually manage the hover state of each point or move points as they
+ *  not actually manage the hover state of each line or move lines as they
  *  are dragged— that responsibility is left up to a higher level component.
  */
 const InteractiveLineLayer: React.FC<InteractiveLineLayerProps> = (props) => {
@@ -57,7 +57,7 @@ const InteractiveLineLayer: React.FC<InteractiveLineLayerProps> = (props) => {
     eventHandlerPriority,
   } = props;
 
-  // Flag set once the underlying point layer has been added to the map
+  // Flag set once the underlying line layer has been added to the map
   const [lineLayerID, setLineLayerID] = useState<string | null>(null);
   const { map } = useContext(MapboxContext);
 
