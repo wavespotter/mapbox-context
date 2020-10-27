@@ -9,6 +9,7 @@ import LineLayer from "./components/layers/LineLayer";
 import FillLayer from "./components/layers/FillLayer";
 import InteractivePointLayer from "./components/layers/InteractivePointLayer";
 import InteractiveLineLayer from "./components/layers/InteractiveLineLayer";
+import InteractiveFillLayer from "./components/layers/InteractiveFillLayer";
 
 import useMapEvent from "./hooks/useMapEvent";
 
@@ -22,6 +23,7 @@ export {
   PointLayer,
   InteractivePointLayer,
   InteractiveLineLayer,
+  InteractiveFillLayer,
   MapboxMapContext,
   useMapEvent,
 };
