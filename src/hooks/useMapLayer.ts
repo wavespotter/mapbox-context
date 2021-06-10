@@ -13,7 +13,8 @@ const useMapLayer = <TLayout = AnyLayout, TPaint = AnyPaint>(
   type: Layer["type"],
   geojson: GeoJSONSourceDataType,
   style: { layout: TLayout; paint: TPaint },
-  onAdd?: (id: string) => void
+  onAdd?: (id: string) => void,
+  beforeLayer?: string
 ) => {
   useEffect(() => {
     if (!map) return;
@@ -30,7 +31,8 @@ const useMapLayer = <TLayout = AnyLayout, TPaint = AnyPaint>(
       layout: style.layout,
       source: id,
       type,
-    });
+      
+    }, beforeLayer);
 
     onAdd?.(id);
 

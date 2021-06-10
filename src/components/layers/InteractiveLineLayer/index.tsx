@@ -55,6 +55,7 @@ const InteractiveLineLayer: React.FC<InteractiveLineLayerProps> = (props) => {
     onDrag,
     eventHandlerPool,
     eventHandlerPriority,
+    beforeLayer,
   } = props;
 
   // Flag set once the underlying line layer has been added to the map
@@ -75,7 +76,7 @@ const InteractiveLineLayer: React.FC<InteractiveLineLayerProps> = (props) => {
     eventHandlerPool,
   });
 
-  return <LineLayer {...props} onAdd={setLineLayerID} />;
+  return <LineLayer {...props} onAdd={setLineLayerID} beforeLayer={beforeLayer} />;
 };
 
 export default InteractiveLineLayer;

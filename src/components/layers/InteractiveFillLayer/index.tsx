@@ -52,6 +52,7 @@ const InteractiveFillLayer: React.FC<InteractiveFillLayerProps> = (props) => {
     onDrag,
     eventHandlerPool,
     eventHandlerPriority,
+    beforeLayer,
   } = props;
 
   // Flag set once the underlying fill layer has been added to the map
@@ -72,7 +73,7 @@ const InteractiveFillLayer: React.FC<InteractiveFillLayerProps> = (props) => {
     eventHandlerPool,
   });
 
-  return <FillLayer {...props} onAdd={setFillLayerID} />;
+  return <FillLayer {...props} onAdd={setFillLayerID} beforeLayer={beforeLayer} />;
 };
 
 export default InteractiveFillLayer;
