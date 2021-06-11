@@ -27,6 +27,7 @@ export type FillLayerProps = {
   onAdd?: (layerName: string) => void;
 
   id?: string;
+  beforeLayer?: string;
 };
 
 // Used to generate unique layer and source IDs if one is not provided
@@ -37,6 +38,7 @@ const FillLayer: React.FC<FillLayerProps> = ({
   style,
   onAdd,
   id: _id,
+  beforeLayer,
 }) => {
   const id = useRef(`fill-layer-${++idIncrement}`);
   if (_id) id.current = _id;
@@ -67,7 +69,7 @@ const FillLayer: React.FC<FillLayerProps> = ({
   );
 
   // This hook handles creating and updating layers on the Mapbox map for us
-  useMapLayer(map, id.current, "fill", geojson, style, onAdd);
+  useMapLayer(map, id.current, "fill", geojson, style, onAdd, beforeLayer);
 
   // No DOM output
   return null;

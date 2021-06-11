@@ -52,6 +52,7 @@ const InteractivePointLayer: React.FC<InteractivePointLayerProps> = (props) => {
     onDrag,
     eventHandlerPool,
     eventHandlerPriority,
+    beforeLayer,
   } = props;
 
   // Flag set once the underlying point layer has been added to the map
@@ -72,7 +73,7 @@ const InteractivePointLayer: React.FC<InteractivePointLayerProps> = (props) => {
     eventHandlerPool,
   });
 
-  return <PointLayer {...props} onAdd={setPointLayerID} />;
+  return <PointLayer {...props} onAdd={setPointLayerID} beforeLayer={beforeLayer} />;
 };
 
 export default InteractivePointLayer;

@@ -32,6 +32,7 @@ export type LineLayerProps = {
   onAdd?: (layerName: string) => void;
 
   id?: string;
+  beforeLayer?: string;
 };
 
 // Used to generate unique layer and source IDs if one is not provided
@@ -42,6 +43,7 @@ const LineLayer: React.FC<LineLayerProps> = ({
   style,
   onAdd,
   id: _id,
+  beforeLayer,
 }) => {
   const id = useRef(`line-layer-${++idIncrement}`);
   if (_id) id.current = _id;
@@ -70,7 +72,7 @@ const LineLayer: React.FC<LineLayerProps> = ({
   );
 
   // This hook handles creating and updating layers on the Mapbox map for us
-  useMapLayer(map, id.current, "line", geojson, style, onAdd);
+  useMapLayer(map, id.current, "line", geojson, style, onAdd, beforeLayer);
 
   // No DOM output
   return null;

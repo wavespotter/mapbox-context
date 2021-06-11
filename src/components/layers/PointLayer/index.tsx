@@ -34,6 +34,7 @@ export type PointLayerProps = {
   onAdd?: (layerName: string) => void;
 
   id?: string;
+  beforeLayer?: string;
 };
 
 // Used to generate unique layer and source IDs if one is not provided
@@ -46,6 +47,7 @@ const PointLayer: React.FC<PointLayerProps> = ({
   onAdd,
   symbolImages,
   id: _id,
+  beforeLayer,
 }) => {
   const id = useRef(`point-layer-${++idIncrement}`);
   if (_id) id.current = _id;
@@ -67,7 +69,7 @@ const PointLayer: React.FC<PointLayerProps> = ({
   );
 
   // This hook handles creating and updating layers on the Mapbox map for us
-  useMapLayer(map, id.current, type, geojson, style, onAdd);
+  useMapLayer(map, id.current, type, geojson, style, onAdd, beforeLayer);
 
   // No DOM output
   return null;
