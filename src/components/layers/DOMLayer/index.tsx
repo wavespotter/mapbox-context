@@ -115,6 +115,9 @@ const MapboxDOMLayer: React.FC<MapboxDOMLayerProps> = ({
             onWheel={!trapScroll ? scrollHandler : undefined}
             onPointerDown={!trapMouse ? pointerHandler : undefined}
             onPointerUp={!trapMouse ? pointerHandler : undefined}
+            onMouseDown={!trapMouse ? pointerHandler : undefined}
+            onMouseUp={!trapMouse ? pointerHandler : undefined}
+
           >
             {children}
           </div>
