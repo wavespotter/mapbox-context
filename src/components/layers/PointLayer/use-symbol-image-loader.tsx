@@ -72,8 +72,11 @@ const useSymbolImageLoader = (
             }));
             throw err;
           }
-
-          map.addImage(m.name, image);
+          try {
+            map.addImage(m.name, image);
+          } catch (e) {
+            console.warn(`Unable to add symbol image (possibly already added) ${m.name}: `, e);
+          }
           // Update success in component state
           setImages((old) => ({
             ...old,
