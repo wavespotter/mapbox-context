@@ -47,7 +47,7 @@ const useSymbolImageLoader = (
           ...old,
           [m.name]: { name: m.name, url: m.url, status: "deleted" },
         }));
-      } catch (e) {}
+      } catch (e) { }
     });
 
     const imagestoAdd = imageDefs?.filter(
@@ -72,8 +72,13 @@ const useSymbolImageLoader = (
             }));
             throw err;
           }
-
-          map.addImage(m.name, image);
+          try {
+            if (!map.hasImage(m.name)) {
+              map.addImage(m.name, image);
+            }
+          } catch (e) {
+            console.warn(`Unable to add symbol image (possibly already added) ${m.name}: `, e);
+          }
           // Update success in component state
           setImages((old) => ({
             ...old,
