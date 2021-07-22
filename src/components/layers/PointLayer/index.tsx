@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useMemo } from "react";
 import { MapboxContext } from "../../MapboxMap";
 import { featureCollection, point } from "@turf/helpers";
-import useSymbolImageLoader from "./use-symbol-image-loader";
+import useImageLoader from "../../../hooks/use-image-loader";
 import useMapLayer from "../../../hooks/useMapLayer";
 
 export type PointLayerProps = {
@@ -55,7 +55,7 @@ const PointLayer: React.FC<PointLayerProps> = ({
   const { map } = useContext(MapboxContext);
 
   // Load images for symbol layers if necessary
-  useSymbolImageLoader(map, symbolImages);
+  useImageLoader(map, symbolImages);
 
   // Create a geojson object for the source data
   const geojson = useMemo(

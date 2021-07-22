@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import deepEqual from "fast-deep-equal";
 
-type SymbolImageDefinition = { url: string; name: string };
+type ImageDefinition = { url: string; name: string };
 
-export type SymbolImageStatus = Record<
+export type ImageStatus = Record<
   string,
   {
     name: string;
@@ -12,18 +12,18 @@ export type SymbolImageStatus = Record<
   }
 >;
 
-/** Custom hook to manage loading an array of images for Mapbox symbol layers
+/** Custom hook to manage loading an array of images for Mapbox layers
  *  that fetches the image data and adds it to the Mapbox map. Returns an object
  *  that contains the status of each loaded image.
  */
-const useSymbolImageLoader = (
+const useImageLoader = (
   map: mapboxgl.Map | null,
-  imageDefs: SymbolImageDefinition[] | undefined
+  imageDefs: ImageDefinition[] | undefined
 ) => {
-  const recentImageDefs = useRef<SymbolImageDefinition[] | undefined>();
-  const [images, setImages] = useState<SymbolImageStatus>({});
+  const recentImageDefs = useRef<ImageDefinition[] | undefined>();
+  const [images, setImages] = useState<ImageStatus>({});
 
-  // Load any new symbols whenever symbol definitions change
+  // Load any new images whenever image definitions change
   useEffect(() => {
     if (!map || deepEqual(imageDefs, recentImageDefs.current)) return;
     // We really only want to run this logic when the image defs change
@@ -77,7 +77,7 @@ const useSymbolImageLoader = (
               map.addImage(m.name, image);
             }
           } catch (e) {
-            console.warn(`Unable to add symbol image (possibly already added) ${m.name}: `, e);
+            console.warn(`Unable to add image (possibly already added) ${m.name}: `, e);
           }
           // Update success in component state
           setImages((old) => ({
@@ -86,7 +86,7 @@ const useSymbolImageLoader = (
           }));
         });
       } catch (e) {
-        console.warn("Unable to load symbol image: ", e);
+        console.warn("Unable to load image: ", e);
       }
     });
   }, [map, images, imageDefs]);
@@ -94,4 +94,4 @@ const useSymbolImageLoader = (
   return images;
 };
 
-export default useSymbolImageLoader;
+export default useImageLoader;

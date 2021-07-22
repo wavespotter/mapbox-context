@@ -2,6 +2,7 @@ import React, { useContext, useRef, useMemo } from "react";
 import { MapboxContext } from "../../MapboxMap";
 import { featureCollection, polygon, Position } from "@turf/helpers";
 import useMapLayer from "../../../hooks/useMapLayer";
+import useImageLoader from "../../../hooks/use-image-loader";
 
 export type PolygonRingCoordinates = (
   | Position
@@ -21,6 +22,17 @@ export type FillLayerProps = {
     paint: mapboxgl.FillPaint;
   };
 
+  /** An optional list of images to load for use in fill layers. Each object
+   *  in this array should contain a `url` to fetch the image along with a
+   *  `name` property that can later be referenced in the fill layer's style
+   *  definition.
+   *
+   *  The `name` property must be unique across all images used on the same
+   *  Mapbox map.
+   */
+  images?: { url: string; name: string }[];
+
+
   /** Callback fired after the layer has been added to the map. Useful if you
    *  want to register event handlers after the layer is ready.
    */
@@ -36,6 +48,7 @@ let idIncrement = 0;
 const FillLayer: React.FC<FillLayerProps> = ({
   polygons,
   style,
+  images,
   onAdd,
   id: _id,
   beforeLayer,
@@ -44,6 +57,9 @@ const FillLayer: React.FC<FillLayerProps> = ({
   if (_id) id.current = _id;
 
   const { map } = useContext(MapboxContext);
+  
+  // Load images for fill layers if necessary
+  useImageLoader(map, images);
 
   // Create a geojson object for the source data
   const geojson = useMemo(
