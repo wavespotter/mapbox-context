@@ -55,7 +55,7 @@ const PointLayer: React.FC<PointLayerProps> = ({
   const { map } = useContext(MapboxContext);
 
   // Load images for symbol layers if necessary
-  useImageLoader(map, symbolImages);
+  const { loadingComplete } = useImageLoader(map, symbolImages);
 
   // Create a geojson object for the source data
   const geojson = useMemo(
@@ -69,7 +69,20 @@ const PointLayer: React.FC<PointLayerProps> = ({
   );
 
   // This hook handles creating and updating layers on the Mapbox map for us
-  useMapLayer(map, id.current, type, geojson, style, onAdd, beforeLayer);
+  useMapLayer(
+    map,
+    id.current,
+    type,
+    loadingComplete
+      ? geojson
+      : {
+          type: "FeatureCollection",
+          features: [],
+        },
+    loadingComplete ? style : { layout: {}, paint: {} },
+    onAdd,
+    beforeLayer
+  );
 
   // No DOM output
   return null;

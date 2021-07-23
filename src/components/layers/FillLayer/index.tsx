@@ -32,7 +32,6 @@ export type FillLayerProps = {
    */
   images?: { url: string; name: string }[];
 
-
   /** Callback fired after the layer has been added to the map. Useful if you
    *  want to register event handlers after the layer is ready.
    */
@@ -57,9 +56,9 @@ const FillLayer: React.FC<FillLayerProps> = ({
   if (_id) id.current = _id;
 
   const { map } = useContext(MapboxContext);
-  
+
   // Load images for fill layers if necessary
-  useImageLoader(map, images);
+  const { loadingComplete } = useImageLoader(map, images);
 
   // Create a geojson object for the source data
   const geojson = useMemo(
@@ -85,7 +84,20 @@ const FillLayer: React.FC<FillLayerProps> = ({
   );
 
   // This hook handles creating and updating layers on the Mapbox map for us
-  useMapLayer(map, id.current, "fill", geojson, style, onAdd, beforeLayer);
+  useMapLayer(
+    map,
+    id.current,
+    "fill",
+    loadingComplete
+      ? geojson
+      : {
+          type: "FeatureCollection",
+          features: [],
+        },
+    loadingComplete ? style : { layout: {}, paint: {} },
+    onAdd,
+    beforeLayer
+  );
 
   // No DOM output
   return null;

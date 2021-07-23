@@ -22,6 +22,7 @@ const useImageLoader = (
 ) => {
   const recentImageDefs = useRef<ImageDefinition[] | undefined>();
   const [images, setImages] = useState<ImageStatus>({});
+  const [loadingComplete, setLoadingComplete] = useState(false);
 
   // Load any new images whenever image definitions change
   useEffect(() => {
@@ -47,7 +48,7 @@ const useImageLoader = (
           ...old,
           [m.name]: { name: m.name, url: m.url, status: "deleted" },
         }));
-      } catch (e) { }
+      } catch (e) {}
     });
 
     const imagestoAdd = imageDefs?.filter(
@@ -77,7 +78,10 @@ const useImageLoader = (
               map.addImage(m.name, image);
             }
           } catch (e) {
-            console.warn(`Unable to add image (possibly already added) ${m.name}: `, e);
+            console.warn(
+              `Unable to add image (possibly already added) ${m.name}: `,
+              e
+            );
           }
           // Update success in component state
           setImages((old) => ({
@@ -91,7 +95,18 @@ const useImageLoader = (
     });
   }, [map, images, imageDefs]);
 
-  return images;
+  useEffect(() => {
+    const loaded = Object.keys(images)
+      .map(
+        // We treat anything that is not 'loading' as done. Even if there was an error,
+        // we want to proceed from here.
+        (i) => images[i].status !== "loading"
+      )
+      .every((value) => value === true);
+    setLoadingComplete(loaded);
+  }, [images]);
+
+  return { images, loadingComplete };
 };
 
 export default useImageLoader;
