@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import deepEqual from "fast-deep-equal";
 
-type ImageDefinition = { url: string; name: string };
+type ImageDefinition = { url: string; name: string, sdf?: boolean };
 
 export type ImageStatus = Record<
   string,
@@ -75,7 +75,7 @@ const useImageLoader = (
           }
           try {
             if (!map.hasImage(m.name) && image) {
-              map.addImage(m.name, image);
+              map.addImage(m.name, image, { sdf: Boolean(m.sdf) });
             }
           } catch (e) {
             console.warn(
