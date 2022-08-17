@@ -64,7 +64,7 @@ const useImageLoader = (
         [m.name]: { name: m.name, url: m.url, status: "loading" },
       }));
       try {
-        map.loadImage(m.url, (err: any, image: HTMLImageElement) => {
+        map.loadImage(m.url, (err: Error | undefined, image: HTMLImageElement | ImageBitmap | undefined) => {
           if (err) {
             // Update error in the component state
             setImages((old) => ({
@@ -74,7 +74,7 @@ const useImageLoader = (
             throw err;
           }
           try {
-            if (!map.hasImage(m.name)) {
+            if (!map.hasImage(m.name) && image) {
               map.addImage(m.name, image);
             }
           } catch (e) {
