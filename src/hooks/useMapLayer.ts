@@ -1,4 +1,4 @@
-import { Map, AnyLayout, AnyPaint, Layer } from "mapbox-gl";
+import { Map, AnyLayout, AnyPaint } from "mapbox-gl";
 import { useEffect } from "react";
 import useDeepCompareEffect from "use-deep-compare-effect";
 
@@ -10,7 +10,7 @@ type GeoJSONSourceDataType =
 const useMapLayer = <TLayout = AnyLayout, TPaint = AnyPaint>(
   map: Map | null,
   id: string,
-  type: Layer["type"],
+  type: any,
   geojson: GeoJSONSourceDataType,
   style: { layout: TLayout; paint: TPaint },
   onAdd?: (id: string) => void,
