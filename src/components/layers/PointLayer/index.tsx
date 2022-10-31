@@ -26,7 +26,7 @@ export type PointLayerProps = {
    *  The `name` property must be unique across all symbols used on the same
    *  Mapbox map.
    */
-  symbolImages?: { url: string; name: string }[];
+  symbolImages?: { url: string; name: string, sdf?: Boolean }[];
 
   /** Callback fired after the layer has been added to the map. Useful if you
    *  want to register event handlers after the layer is ready.
