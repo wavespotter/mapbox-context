@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import deepEqual from "fast-deep-equal";
 
-type ImageDefinition = { url: string; name: string, sdf?: boolean };
+export type ImageDefinition = { url: string; name: string, sdf?: boolean };
 
 export type ImageStatus = Record<
   string,

@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useMemo } from "react";
 import { MapboxContext } from "../../MapboxMap";
 import { featureCollection, point } from "@turf/helpers";
-import useImageLoader from "../../../hooks/use-image-loader";
+import useImageLoader, { ImageDefinition } from "../../../hooks/use-image-loader";
 import useMapLayer from "../../../hooks/useMapLayer";
 
 export type PointLayerProps = {
@@ -26,7 +26,7 @@ export type PointLayerProps = {
    *  The `name` property must be unique across all symbols used on the same
    *  Mapbox map.
    */
-  symbolImages?: { url: string; name: string }[];
+  symbolImages?: ImageDefinition[];
 
   /** Callback fired after the layer has been added to the map. Useful if you
    *  want to register event handlers after the layer is ready.
