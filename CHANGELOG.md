@@ -1,3 +1,9 @@
+1.1.1
+====
+
+- update mapbox-gl
+- remove broken `hasImage` call
+
 1.1.0
 ====
 

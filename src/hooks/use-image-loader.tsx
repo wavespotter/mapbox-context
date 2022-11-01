@@ -74,7 +74,7 @@ const useImageLoader = (
             throw err;
           }
           try {
-            if (!map.hasImage(m.name) && image) {
+            if (image) {
               map.addImage(m.name, image, { sdf: Boolean(m.sdf) });
             }
           } catch (e) {
