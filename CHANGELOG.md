@@ -1,3 +1,13 @@
+1.1.1
+====
+
+- update mapbox-gl
+
+1.1.0
+====
+
+- adds SDF support to PointLayer
+
 1.0.0
 =====
 
