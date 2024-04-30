@@ -88,10 +88,10 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       const pitch = newMap.getPitch();
       // no need to update the state if the values are the same
       if (zoom !== transformRef.current?.zoom
-        && center[0] !== transformRef.current?.center[0]
-        && center[1] !== transformRef.current?.center[1]
-        && bearing !== transformRef.current?.bearing
-        && pitch !== transformRef.current?.pitch) {
+        || center[0] !== transformRef.current?.center[0]
+        || center[1] !== transformRef.current?.center[1]
+        || bearing !== transformRef.current?.bearing
+        || pitch !== transformRef.current?.pitch) {
         setTransform({
           zoom,
           center,
