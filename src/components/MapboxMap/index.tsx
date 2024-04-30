@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useDeepCompareEffectNoCheck } from "use-deep-compare-effect";
 import mapboxgl from "mapbox-gl";
 
@@ -78,13 +78,20 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       setMap(newMap);
     });
     newMap.on("render", () => {
-      const center = newMap.getCenter();
-      setTransform({
-        zoom: newMap.getZoom(),
-        center: [center.lng, center.lat],
-        bearing: newMap.getBearing(),
-        pitch: newMap.getPitch(),
-      });
+      const newCenter = newMap.getCenter();
+      const zoom = newMap.getZoom();
+      const center: [number, number] = [newCenter.lng, newCenter.lat];
+      const bearing = newMap.getBearing();
+      const pitch = newMap.getPitch();
+      // no need to update the state if the values are the same
+      if (zoom !== transform?.zoom && center !== transform?.center && bearing !== transform?.bearing && pitch !== transform?.pitch) {
+        setTransform({
+          zoom,
+          center,
+          bearing,
+          pitch,
+        });
+      }
     });
     return () => {
       newMap.remove();
@@ -163,6 +170,13 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
 
   const containerBounds = mapContainer.current?.getBoundingClientRect();
 
+  const providerValue = useMemo(() => ({
+    map,
+    width: containerBounds?.width || 0,
+    height: containerBounds?.height || 0,
+    transform,
+  }), [map, containerBounds, transform]);
+
   return (
     <>
       <div style={{ width, height, overflow: "hidden", position: "relative" }}>
@@ -171,12 +185,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
           style={{ position: "absolute", width, height }}
         />
         <MapboxContext.Provider
-          value={{
-            map,
-            width: containerBounds?.width || 0,
-            height: containerBounds?.height || 0,
-            transform,
-          }}
+          value={providerValue}
         >
           {children}
         </MapboxContext.Provider>
