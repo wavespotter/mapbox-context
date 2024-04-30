@@ -52,6 +52,9 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
 
   // Store map transform data in state so we can pass it to children
   const [transform, setTransform] = useState<MapboxMapTransform | null>(null);
+  // maintain this reference so we can access it in the useEffect below without including it in the dependency array
+  const transformRef = useRef(transform);
+  transformRef.current = transform;
 
   // Let the parent component overwrite the map bounds
   useDeepCompareEffectNoCheck(() => {
@@ -84,7 +87,11 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       const bearing = newMap.getBearing();
       const pitch = newMap.getPitch();
       // no need to update the state if the values are the same
-      if (zoom !== transform?.zoom && center !== transform?.center && bearing !== transform?.bearing && pitch !== transform?.pitch) {
+      if (zoom !== transformRef.current?.zoom
+        && center[0] !== transformRef.current?.center[0]
+        && center[1] !== transformRef.current?.center[1]
+        && bearing !== transformRef.current?.bearing
+        && pitch !== transformRef.current?.pitch) {
         setTransform({
           zoom,
           center,
@@ -168,14 +175,14 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
     }
   }, [showControls, map]);
 
-  const containerBounds = mapContainer.current?.getBoundingClientRect();
+  const { width: containerBoundsWidth, height: containerBoundsHeight } = mapContainer.current?.getBoundingClientRect() || {};
 
   const providerValue = useMemo(() => ({
     map,
-    width: containerBounds?.width || 0,
-    height: containerBounds?.height || 0,
+    width: containerBoundsWidth || 0,
+    height: containerBoundsHeight || 0,
     transform,
-  }), [map, containerBounds, transform]);
+  }), [map, containerBoundsWidth, containerBoundsHeight, transform]);
 
   return (
     <>
