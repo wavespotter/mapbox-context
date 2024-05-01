@@ -59,8 +59,26 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   // Let the parent component overwrite the map bounds
   useDeepCompareEffectNoCheck(() => {
     if (!map || !fitBounds) return;
-    map.fitBounds(fitBounds.bounds, fitBounds.options);
-  }, [fitBounds]);
+    const { height, width } = map.getContainer().getBoundingClientRect();
+    // make sure the padding in the options is not wider than the map
+    // otherwise we crash the map
+    let padding = fitBounds.options?.padding;
+    if (typeof padding === "number") {
+      const minDim = padding * 2;
+      if (minDim >= height || minDim >= width) {
+        padding = 0;
+      }
+    } else if (padding) {
+      const { top, right, bottom, left } = padding ?? {};
+      const minWidth = right + left;
+      const minHeight = top + bottom;
+      if (minHeight >= height || minWidth >= width) {
+        padding = 0;
+      }
+    }
+    const options = { ...fitBounds.options, padding };
+    map.fitBounds(fitBounds.bounds, options);
+  }, [fitBounds, map]);
 
   // Let the parent component overwrite the map center
   useDeepCompareEffectNoCheck(() => {
@@ -111,12 +129,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       map?.setCenter(center);
     }
   }, [center, map]);
-
-  useDeepCompareEffectNoCheck(() => {
-    if (fitBounds) {
-      map?.fitBounds(fitBounds.bounds, fitBounds.options);
-    }
-  }, [fitBounds, map]);
 
   useEffect(() => {
     if (zoom !== undefined) {
