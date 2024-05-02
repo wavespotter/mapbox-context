@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, PropsWithChildren } from "react";
 import { useDeepCompareEffectNoCheck } from "use-deep-compare-effect";
 import mapboxgl from "mapbox-gl";
 
@@ -7,7 +7,7 @@ import MapboxContext, {
   MapboxMapTransform,
 } from "../../contexts/MapboxContext";
 
-export type MapboxMapProps = {
+export type MapboxMapProps = PropsWithChildren<{
   token: string;
   styleUrl: string;
   width: string;
@@ -24,7 +24,7 @@ export type MapboxMapProps = {
   dragRotate?: boolean;
   touchZoomRotate?: boolean | { enableRotation: boolean };
   touchPitch?: boolean;
-};
+}>;
 
 /** A modern Mapbox React component using hooks and context
  *  that supports composable, declarative data layers
