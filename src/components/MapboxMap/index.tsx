@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useDeepCompareEffectNoCheck } from "use-deep-compare-effect";
 import mapboxgl from "mapbox-gl";
 
@@ -52,12 +52,33 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
 
   // Store map transform data in state so we can pass it to children
   const [transform, setTransform] = useState<MapboxMapTransform | null>(null);
+  // maintain this reference so we can access it in the useEffect below without including it in the dependency array
+  const transformRef = useRef(transform);
+  transformRef.current = transform;
 
   // Let the parent component overwrite the map bounds
   useDeepCompareEffectNoCheck(() => {
     if (!map || !fitBounds) return;
-    map.fitBounds(fitBounds.bounds, fitBounds.options);
-  }, [fitBounds]);
+    const { height, width } = map.getContainer().getBoundingClientRect();
+    // make sure the padding in the options is not wider than the map
+    // otherwise we crash the map
+    let padding = fitBounds.options?.padding;
+    if (typeof padding === "number") {
+      const minDim = padding * 2;
+      if (minDim >= height || minDim >= width) {
+        padding = 0;
+      }
+    } else if (padding) {
+      const { top, right, bottom, left } = padding ?? {};
+      const minWidth = right + left;
+      const minHeight = top + bottom;
+      if (minHeight >= height || minWidth >= width) {
+        padding = 0;
+      }
+    }
+    const options = { ...fitBounds.options, padding };
+    map.fitBounds(fitBounds.bounds, options);
+  }, [fitBounds, map]);
 
   // Let the parent component overwrite the map center
   useDeepCompareEffectNoCheck(() => {
@@ -78,13 +99,24 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       setMap(newMap);
     });
     newMap.on("render", () => {
-      const center = newMap.getCenter();
-      setTransform({
-        zoom: newMap.getZoom(),
-        center: [center.lng, center.lat],
-        bearing: newMap.getBearing(),
-        pitch: newMap.getPitch(),
-      });
+      const newCenter = newMap.getCenter();
+      const zoom = newMap.getZoom();
+      const center: [number, number] = [newCenter.lng, newCenter.lat];
+      const bearing = newMap.getBearing();
+      const pitch = newMap.getPitch();
+      // no need to update the state if the values are the same
+      if (zoom !== transformRef.current?.zoom
+        || center[0] !== transformRef.current?.center[0]
+        || center[1] !== transformRef.current?.center[1]
+        || bearing !== transformRef.current?.bearing
+        || pitch !== transformRef.current?.pitch) {
+        setTransform({
+          zoom,
+          center,
+          bearing,
+          pitch,
+        });
+      }
     });
     return () => {
       newMap.remove();
@@ -97,12 +129,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       map?.setCenter(center);
     }
   }, [center, map]);
-
-  useDeepCompareEffectNoCheck(() => {
-    if (fitBounds) {
-      map?.fitBounds(fitBounds.bounds, fitBounds.options);
-    }
-  }, [fitBounds, map]);
 
   useEffect(() => {
     if (zoom !== undefined) {
@@ -161,7 +187,14 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
     }
   }, [showControls, map]);
 
-  const containerBounds = mapContainer.current?.getBoundingClientRect();
+  const { width: containerBoundsWidth, height: containerBoundsHeight } = mapContainer.current?.getBoundingClientRect() || {};
+
+  const providerValue = useMemo(() => ({
+    map,
+    width: containerBoundsWidth || 0,
+    height: containerBoundsHeight || 0,
+    transform,
+  }), [map, containerBoundsWidth, containerBoundsHeight, transform]);
 
   return (
     <>
@@ -171,12 +204,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
           style={{ position: "absolute", width, height }}
         />
         <MapboxContext.Provider
-          value={{
-            map,
-            width: containerBounds?.width || 0,
-            height: containerBounds?.height || 0,
-            transform,
-          }}
+          value={providerValue}
         >
           {children}
         </MapboxContext.Provider>
