@@ -124,6 +124,9 @@ class MapboxEventHandlerPool {
 
     // Make sure to capture pointerup events anywhere in the window
     window.addEventListener("pointerup", this.onMouseUp);
+
+    window.addEventListener("resize", this.map.resize);
+
     this.registered = true;
   }
 
@@ -145,6 +148,8 @@ class MapboxEventHandlerPool {
 
     // Make sure to capture pointerup events anywhere in the window
     window.removeEventListener("pointerup", this.onMouseUp);
+
+    window.removeEventListener("resize", this.map.resize);
 
     this.registered = false;
   }

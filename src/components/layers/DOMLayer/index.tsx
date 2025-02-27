@@ -51,7 +51,7 @@ const MapboxDOMLayer: React.FC<MapboxDOMLayerProps> = ({
   // Forward scroll events to the Mapbox map
   const scrollHandler = useCallback(
     (ev: React.WheelEvent<HTMLDivElement>) => {
-      ev.preventDefault;
+      ev.preventDefault();
       map
         ?.getCanvas()
         .dispatchEvent(new WheelEvent(ev.nativeEvent.type, ev.nativeEvent));
@@ -117,7 +117,6 @@ const MapboxDOMLayer: React.FC<MapboxDOMLayerProps> = ({
             onPointerUp={!trapMouse ? pointerHandler : undefined}
             onMouseDown={!trapMouse ? pointerHandler : undefined}
             onMouseUp={!trapMouse ? pointerHandler : undefined}
-
           >
             {children}
           </div>
