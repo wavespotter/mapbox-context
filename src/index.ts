@@ -1,13 +1,15 @@
 // Import and re-export all objects and types this library should expose
 import MapboxMap, { MapboxContext } from "./components/MapboxMap";
-import CustomLayer from "./components/layers/CustomLayer";
 import DOMLayer from "./components/layers/DOMLayer";
 import FillLayer from "./components/layers/FillLayer";
 import InteractiveFillLayer from "./components/layers/InteractiveFillLayer";
 import InteractiveLineLayer from "./components/layers/InteractiveLineLayer";
-import InteractivePointLayer, { InteractivePointData, InteractivePointLayerProps } from "./components/layers/InteractivePointLayer";
+import InteractivePointLayer, {
+  InteractivePointData,
+  InteractivePointLayerProps,
+} from "./components/layers/InteractivePointLayer";
 import LineLayer from "./components/layers/LineLayer";
-import PointLayer from "./components/layers/PointLayer";
+import PointLayer, { PointLayerProps } from "./components/layers/PointLayer";
 import RasterLayer from "./components/layers/RasterLayer";
 
 import MapboxMapContext from "./contexts/MapboxContext";
@@ -20,10 +22,6 @@ import useMapLayerInteractions, {
 import useMapLayer from "./hooks/useMapLayer";
 
 export {
-  type InteractivePointData,
-  type InteractivePointLayerProps,
-  type MapEventHandler,
-  CustomLayer,
   DOMLayer,
   FillLayer,
   InteractiveFillLayer,
@@ -39,4 +37,8 @@ export {
   useMapEvent,
   useMapLayer,
   useMapLayerInteractions,
+  type InteractivePointData,
+  type InteractivePointLayerProps,
+  type MapEventHandler,
+  type PointLayerProps,
 };
