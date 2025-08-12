@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from "react";
-import { deepEqual } from 'fast-equals';
+import { deepEqual } from "fast-equals";
+import { Map as MbMap } from "mapbox-gl";
+import { useEffect, useRef, useState } from "react";
 
-export type ImageDefinition = { url: string; name: string, sdf?: boolean };
+export type ImageDefinition = { url: string; name: string; sdf?: boolean };
 
 export type ImageStatus = Record<
   string,
@@ -17,7 +18,7 @@ export type ImageStatus = Record<
  *  that contains the status of each loaded image.
  */
 const useImageLoader = (
-  map: mapboxgl.Map | null,
+  map: MbMap | null,
   imageDefs: ImageDefinition[] | undefined
 ) => {
   const recentImageDefs = useRef<ImageDefinition[] | undefined>();
@@ -64,32 +65,38 @@ const useImageLoader = (
         [m.name]: { name: m.name, url: m.url, status: "loading" },
       }));
       try {
-        map.loadImage(m.url, (err: Error | null | undefined, image: HTMLImageElement | ImageBitmap | ImageData | null | undefined) => {
-          if (err || !image) {
-            // Update error in the component state
+        map.loadImage(
+          m.url,
+          (
+            err: Error | null | undefined,
+            image: HTMLImageElement | ImageBitmap | ImageData | null | undefined
+          ) => {
+            if (err || !image) {
+              // Update error in the component state
+              setImages((old) => ({
+                ...old,
+                [m.name]: { url: m.url, name: m.name, status: "errored" },
+              }));
+              if (err) throw err;
+              return;
+            }
+            try {
+              if (!map.hasImage(m.name)) {
+                map.addImage(m.name, image, { sdf: Boolean(m.sdf) });
+              }
+            } catch (e) {
+              console.warn(
+                `Unable to add image (possibly already added) ${m.name}: `,
+                e
+              );
+            }
+            // Update success in component state
             setImages((old) => ({
               ...old,
-              [m.name]: { url: m.url, name: m.name, status: "errored" },
+              [m.name]: { name: m.name, url: m.url, status: "ready" },
             }));
-            if (err) throw err;
-            return;
           }
-          try {
-            if (!map.hasImage(m.name)) {
-              map.addImage(m.name, image, { sdf: Boolean(m.sdf) });
-            }
-          } catch (e) {
-            console.warn(
-              `Unable to add image (possibly already added) ${m.name}: `,
-              e
-            );
-          }
-          // Update success in component state
-          setImages((old) => ({
-            ...old,
-            [m.name]: { name: m.name, url: m.url, status: "ready" },
-          }));
-        });
+        );
       } catch (e) {
         console.warn("Unable to load image: ", e);
       }

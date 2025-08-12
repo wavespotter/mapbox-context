@@ -4,6 +4,7 @@ import { StoryFn, Meta } from "@storybook/react/types-6-0";
 
 import LineLayer, { LineLayerProps } from ".";
 import MapDecorator from "../../../storybook-helpers/map-decorator";
+import { LayoutSpecification, PaintSpecification } from "mapbox-gl";
 export default {
   title: "Line layer",
   component: LineLayer,
@@ -87,8 +88,8 @@ const mockLines = [
   },
 ];
 const lineStyle: {
-  layout: mapboxgl.LayoutSpecification;
-  paint: mapboxgl.PaintSpecification;
+  layout: LayoutSpecification;
+  paint: PaintSpecification;
 } = {
   layout: {},
   paint: {

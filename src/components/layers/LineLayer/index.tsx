@@ -1,5 +1,6 @@
 import { featureCollection, lineString } from "@turf/helpers";
 import type { Position } from "geojson";
+import { LayoutSpecification, PaintSpecification } from "mapbox-gl";
 import React, { useContext, useMemo, useRef } from "react";
 import useMapLayer from "../../../hooks/useMapLayer";
 import { MapboxContext } from "../../MapboxMap";
@@ -23,8 +24,8 @@ export type LineLayerProps = {
       >;
 
   style: {
-    layout: mapboxgl.LayoutSpecification;
-    paint: mapboxgl.PaintSpecification;
+    layout: LayoutSpecification;
+    paint: PaintSpecification;
   };
 
   /** Callback fired after the layer has been added to the map. Useful if you

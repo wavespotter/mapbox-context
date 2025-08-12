@@ -1,5 +1,12 @@
 import { useEffect } from "react";
-import EventData, { LngLat } from "mapbox-gl";
+import EventData, {
+  LngLat,
+  GeoJSONFeature,
+  MapMouseEvent,
+  MapTouchEvent,
+  Map as MbMap,
+  Point,
+} from "mapbox-gl";
 
 export type InteractiveLayerProps = {
   /** Optional name of an "event handler pool". Only one callback per event pool
@@ -23,30 +30,30 @@ export type InteractiveLayerProps = {
   onDragEnd?: MapEventHandler;
 };
 
-export type MapEventHandler<TEvent = mapboxgl.MapMouseEvent> = (
+export type MapEventHandler<TEvent = MapMouseEvent> = (
   id: string | number,
   e: TEvent
 ) => void;
-export type NativeMapEventHandler<TEvent = mapboxgl.MapMouseEvent> = (
+export type NativeMapEventHandler<TEvent = MapMouseEvent> = (
   e: TEvent & {
-    features?: mapboxgl.MapboxGeoJSONFeature[] | undefined;
+    features?: GeoJSONFeature[] | undefined;
   }
 ) => void;
 
 export type MapDragStartHandler = (
   id: string | number,
-  offset: mapboxgl.Point,
-  e: mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent
+  offset: Point,
+  e: MapMouseEvent | MapTouchEvent
 ) => void;
 export type MapDragHandler = (
   id: string | number,
   newCoordinates: { longitude: number; latitude: number },
-  offset: mapboxgl.Point,
-  e: mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent
+  offset: Point,
+  e: MapMouseEvent | MapTouchEvent
 ) => void;
 
 type MapInteractionHandlerOptions = {
-  map: mapboxgl.Map | null;
+  map: MbMap | null;
   layerID: string | null;
 
   /** An interaction pool can be used to ensure that only one event handler
@@ -66,14 +73,14 @@ type MapInteractionHandlerOptions = {
   onHoverLeave?: MapEventHandler;
   onDragStart?: (
     id: string | number,
-    offset: mapboxgl.Point,
-    e: mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent
+    offset: Point,
+    e: MapMouseEvent | MapTouchEvent
   ) => void;
   onDrag?: (
     id: string | number,
     newCoordinates: { longitude: number; latitude: number },
-    offset: mapboxgl.Point,
-    e: mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent
+    offset: Point,
+    e: MapMouseEvent | MapTouchEvent
   ) => void;
   onDragEnd?: MapEventHandler;
 };
@@ -91,15 +98,15 @@ type eventHandlerPoolLayerDefinition = {
 
 class MapboxEventHandlerPool {
   private layers: eventHandlerPoolLayerDefinition[];
-  private lastHoverFeature: mapboxgl.MapboxGeoJSONFeature | null = null;
+  private lastHoverFeature: GeoJSONFeature | null = null;
   private dragging: {
-    feature: mapboxgl.MapboxGeoJSONFeature;
-    offset: mapboxgl.Point;
+    feature: GeoJSONFeature;
+    offset: Point;
   } | null = null;
 
   private registered = false;
 
-  constructor(private map: mapboxgl.Map, private name: string) {
+  constructor(private map: MbMap, private name: string) {
     this.map = map;
     this.layers = [];
     this.register();
@@ -149,7 +156,7 @@ class MapboxEventHandlerPool {
     this.registered = false;
   }
 
-  public onClick: NativeMapEventHandler<mapboxgl.MapMouseEvent> = (e: any) => {
+  public onClick: NativeMapEventHandler<MapMouseEvent> = (e: any) => {
     // Find the highest-ranked clickable feature
     const highestPriorityClickableFeature =
       this.sortEventFeatures(e)?.find((f) => {
@@ -205,9 +212,7 @@ class MapboxEventHandlerPool {
     }
   };
 
-  public onDrag: NativeMapEventHandler<
-    mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent
-  > = (e) => {
+  public onDrag: NativeMapEventHandler<MapMouseEvent | MapTouchEvent> = (e) => {
     if ((e.originalEvent as TouchEvent).touches?.length > 1) {
       e.preventDefault();
       return;
@@ -233,9 +238,9 @@ class MapboxEventHandlerPool {
     }
   };
 
-  public onMouseDown: NativeMapEventHandler<
-    mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent
-  > = (e: any) => {
+  public onMouseDown: NativeMapEventHandler<MapMouseEvent | MapTouchEvent> = (
+    e: any
+  ) => {
     // Don't handle a touchstart event if we're already dragging something
     if (e.type === "touchstart" && this.dragging !== null) {
       return;
@@ -322,7 +327,7 @@ class MapboxEventHandlerPool {
    *  each feature
    */
   private sortEventFeatures(
-    e: (mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent) & typeof EventData
+    e: (MapMouseEvent | MapTouchEvent) & typeof EventData
   ) {
     const features = this.map.queryRenderedFeatures(e.point, {
       layers: this.layers.map((l) => l.id),
@@ -347,10 +352,7 @@ class MapboxEventHandlerPool {
   }
 }
 
-function getDistanceToFeature(
-  eventPoint: LngLat,
-  f: mapboxgl.MapboxGeoJSONFeature
-) {
+function getDistanceToFeature(eventPoint: LngLat, f: GeoJSONFeature) {
   // Distance to feature is only really meaningful for `Point` features.
   // Otherwise, look to the feature's `priority` value if it exists
   // And finally, fall back to using a `0` distance, meaning disambiguation will
@@ -363,16 +365,13 @@ function getDistanceToFeature(
 }
 
 /** A singleton mapping of event handler pools for each Mapbox Map */
-const eventHandlerPools = new Map<
-  mapboxgl.Map,
-  Map<string, MapboxEventHandlerPool>
->();
+const eventHandlerPools = new Map<MbMap, Map<string, MapboxEventHandlerPool>>();
 
 /** Gets an event handler pool with the given name on the given Mapbox GL map.
  *  Creates the pool if it doesn't already exist.
  */
 function getEventHandlerPool(
-  map: mapboxgl.Map,
+  map: MbMap,
   poolName: string
 ): MapboxEventHandlerPool {
   // Create the pool if it doesn't already exist
