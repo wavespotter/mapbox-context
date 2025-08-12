@@ -7,6 +7,7 @@ import InteractiveFillLayer, {
 import { InteractiveLineLayer, MapboxMapContext } from "../../..";
 import MapDecorator from "../../../storybook-helpers/map-decorator";
 import { PolygonRingCoordinates } from "../FillLayer";
+import { LayoutSpecification, PaintSpecification } from "mapbox-gl";
 
 export default {
     title: "Interactive Fill Layer",
@@ -62,8 +63,8 @@ const mockFills = [
     },
 ];
 const fillStyle: {
-    layout: mapboxgl.FillLayout;
-    paint: mapboxgl.FillPaint;
+    layout: LayoutSpecification;
+    paint: PaintSpecification;
 } = {
     layout: {},
     paint: {
@@ -73,8 +74,8 @@ const fillStyle: {
 };
 // Big transparent lines to increase the touch area of fills
 const bigTransparentLineStyle: {
-    layout: mapboxgl.LayoutSpecification;
-    paint: mapboxgl.PaintSpecification;
+    layout: LayoutSpecification;
+    paint: PaintSpecification;
 } = {
     layout: {},
     paint: {

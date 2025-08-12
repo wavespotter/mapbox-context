@@ -20,7 +20,6 @@ export default defineConfig({
         "@turf/helpers",
         "fast-equals",
         "mapbox-gl",
-        "react",
         "use-deep-compare-effect",
       ],
       input: Object.fromEntries(

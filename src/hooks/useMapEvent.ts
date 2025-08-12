@@ -4,7 +4,7 @@ import MapboxContext from "../contexts/MapboxContext";
 
 const useMapEvent = <T extends MapEventType>(
   type: T,
-  handler: (event: any) => void // TODO: Remove any
+  handler: (event: any) => void
 ) => {
   const { map } = useContext(MapboxContext);
 

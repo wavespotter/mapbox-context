@@ -1,8 +1,11 @@
-import React, { useContext, useRef, useMemo } from "react";
-import { MapboxContext } from "../../MapboxMap";
 import { featureCollection, point } from "@turf/helpers";
-import useImageLoader, { ImageDefinition } from "../../../hooks/use-image-loader";
+import type { LayoutSpecification, PaintSpecification } from "mapbox-gl";
+import React, { useContext, useMemo, useRef } from "react";
+import useImageLoader, {
+  ImageDefinition,
+} from "../../../hooks/use-image-loader";
 import useMapLayer from "../../../hooks/useMapLayer";
+import { MapboxContext } from "../../MapboxMap";
 
 export type PointLayerProps = {
   points: {
@@ -14,8 +17,8 @@ export type PointLayerProps = {
 
   type: "circle" | "symbol";
   style: {
-    layout: mapboxgl.CircleLayout | mapboxgl.SymbolLayout;
-    paint: mapboxgl.CirclePaint | mapboxgl.SymbolPaint;
+    layout: LayoutSpecification;
+    paint: PaintSpecification;
   };
 
   /** An optional list of images to load for use in symbol layers. Each object
@@ -79,7 +82,7 @@ const PointLayer: React.FC<PointLayerProps> = ({
           type: "FeatureCollection",
           features: [],
         },
-    loadingComplete ? style : { layout: {} as any, paint: {} as any}, // TODO: Remove anys
+    loadingComplete ? style : { layout: {}, paint: {} },
     onAdd,
     beforeLayer
   );

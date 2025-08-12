@@ -28,14 +28,16 @@ const useMapLayer = <
       data: { type: "FeatureCollection", features: [] },
     });
 
-    map.addLayer({
-      id: id,
-      paint: style.paint,
-      layout: style.layout,
-      source: id,
-      type,
-      
-    }, beforeLayer);
+    map.addLayer(
+      {
+        id: id,
+        paint: style.paint,
+        layout: style.layout,
+        source: id,
+        type,
+      },
+      beforeLayer
+    );
 
     onAdd?.(id);
 
@@ -103,7 +105,6 @@ const useMapSourceGeoJSON = (
     if (source?.type !== "geojson") {
       console.warn("Source should be geojson. Cannot set data.");
     } else {
-      // TODO: Unsure of this one
       // Ensure geojson is a native string or a valid GeoJSON object
       const data =
         typeof geojson === "string"

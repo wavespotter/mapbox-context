@@ -149,7 +149,7 @@ class MapboxEventHandlerPool {
     this.registered = false;
   }
 
-  public onClick: NativeMapEventHandler<mapboxgl.MapMouseEvent> = (e: any) => { // TODO: Remove any
+  public onClick: NativeMapEventHandler<mapboxgl.MapMouseEvent> = (e: any) => {
     // Find the highest-ranked clickable feature
     const highestPriorityClickableFeature =
       this.sortEventFeatures(e)?.find((f) => {
@@ -171,7 +171,7 @@ class MapboxEventHandlerPool {
   };
 
   // Handle hover events and drag events
-  public onMouseMove: NativeMapEventHandler = (e: any) => { // TODO: Remove any
+  public onMouseMove: NativeMapEventHandler = (e: any) => {
     // Don't do anything if we're currently dragging a point
     if (this.dragging !== null) return;
     const sortedFeatures = this.sortEventFeatures(e);
@@ -235,7 +235,7 @@ class MapboxEventHandlerPool {
 
   public onMouseDown: NativeMapEventHandler<
     mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent
-  > = (e: any) => { // TODO: Remove any
+  > = (e: any) => {
     // Don't handle a touchstart event if we're already dragging something
     if (e.type === "touchstart" && this.dragging !== null) {
       return;

@@ -1,13 +1,14 @@
-import React, { useState, useCallback, useContext } from "react";
+import React, { useCallback, useContext, useState } from "react";
 
-import { StoryFn, Meta } from "@storybook/react/types-6-0";
+import { Meta, StoryFn } from "@storybook/react/types-6-0";
 
 import InteractivePointLayer, {
-  InteractivePointLayerProps,
   InteractivePointData,
+  InteractivePointLayerProps,
 } from ".";
 import MapDecorator from "../../../storybook-helpers/map-decorator";
 
+import { CircleLayerSpecification } from "mapbox-gl";
 import { MapboxMapContext } from "../../..";
 import PointLayer from "../PointLayer";
 
@@ -47,8 +48,8 @@ for (let i = -180; i < 180; i += 5) {
 }
 
 const circleStyle: {
-  layout: mapboxgl.CircleLayout;
-  paint: mapboxgl.CirclePaint;
+  layout: NonNullable<CircleLayerSpecification["layout"]>;
+  paint: NonNullable<CircleLayerSpecification["paint"]>;
 } = {
   layout: {},
   paint: {
@@ -62,8 +63,8 @@ const circleStyle: {
 
 // Big transparent circles to increase the touch area of points
 const bigTransparentCircleStyle: {
-  layout: mapboxgl.CircleLayout;
-  paint: mapboxgl.CirclePaint;
+  layout: NonNullable<CircleLayerSpecification["layout"]>;
+  paint: NonNullable<CircleLayerSpecification["paint"]>;
 } = {
   layout: {},
   paint: {
@@ -113,7 +114,7 @@ const InteractivePointsStateManager: StoryFn<
 
   const handleClick = useCallback((id: string | number) => {
     setPoints((old: any[]) =>
-      old.map((o: { id: string | number; properties: { selected: any; }; }) =>
+      old.map((o: { id: string | number; properties: { selected: any } }) =>
         o.id === id
           ? {
               ...o,
@@ -126,7 +127,7 @@ const InteractivePointsStateManager: StoryFn<
 
   const handleHoverEnter = useCallback((id: string | number) => {
     setPoints((old: any[]) =>
-      old.map((o: { id: string | number; properties: any; }) =>
+      old.map((o: { id: string | number; properties: any }) =>
         o.id === id
           ? {
               ...o,
@@ -139,7 +140,7 @@ const InteractivePointsStateManager: StoryFn<
 
   const handleHoverLeave = useCallback((id: string | number) => {
     setPoints((old: any[]) =>
-      old.map((o: { id: string | number; properties: any; }) =>
+      old.map((o: { id: string | number; properties: any }) =>
         o.id === id
           ? {
               ...o,

@@ -1,5 +1,6 @@
 import { featureCollection, polygon } from "@turf/helpers";
 import type { Position } from "geojson";
+import { LayoutSpecification, PaintSpecification } from "mapbox-gl";
 import React, { useContext, useMemo, useRef } from "react";
 import useImageLoader from "../../../hooks/use-image-loader";
 import useMapLayer from "../../../hooks/useMapLayer";
@@ -19,8 +20,8 @@ export type FillLayerProps = {
     | GeoJSON.FeatureCollection<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
 
   style: {
-    layout: mapboxgl.FillLayout;
-    paint: mapboxgl.FillPaint;
+    layout: LayoutSpecification;
+    paint: PaintSpecification;
   };
 
   /** An optional list of images to load for use in fill layers. Each object
@@ -95,9 +96,7 @@ const FillLayer: React.FC<FillLayerProps> = ({
           type: "FeatureCollection",
           features: [],
         },
-    loadingComplete
-      ? style
-      : { layout: {} as any, paint: {} as any }, // TODO: Remove anys
+    loadingComplete ? style : { layout: {}, paint: {} },
     onAdd,
     beforeLayer
   );
