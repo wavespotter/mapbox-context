@@ -79,7 +79,7 @@ const PointLayer: React.FC<PointLayerProps> = ({
           type: "FeatureCollection",
           features: [],
         },
-    loadingComplete ? style : { layout: {}, paint: {} },
+    loadingComplete ? style : { layout: {} as any, paint: {} as any}, // TODO: Remove anys
     onAdd,
     beforeLayer
   );

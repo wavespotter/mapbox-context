@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Story, Meta } from "@storybook/react/types-6-0";
+import { StoryFn, Meta } from "@storybook/react/types-6-0";
 
 import LineLayer, { LineLayerProps } from ".";
 import MapDecorator from "../../../storybook-helpers/map-decorator";
@@ -87,8 +87,8 @@ const mockLines = [
   },
 ];
 const lineStyle: {
-  layout: mapboxgl.LineLayout;
-  paint: mapboxgl.LinePaint;
+  layout: mapboxgl.LayoutSpecification;
+  paint: mapboxgl.PaintSpecification;
 } = {
   layout: {},
   paint: {
@@ -97,7 +97,7 @@ const lineStyle: {
   },
 };
 
-const Template: Story<LineLayerProps> = (args) => <LineLayer {...args} />;
+const Template: StoryFn<LineLayerProps> = (args: JSX.IntrinsicAttributes & LineLayerProps & { children?: React.ReactNode; }) => <LineLayer {...args} />;
 
 export const SingleLine = Template.bind({});
 SingleLine.args = {

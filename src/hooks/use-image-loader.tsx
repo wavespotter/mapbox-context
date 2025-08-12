@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import deepEqual from "fast-deep-equal";
+import { deepEqual } from 'fast-equals';
 
 export type ImageDefinition = { url: string; name: string, sdf?: boolean };
 
@@ -64,17 +64,18 @@ const useImageLoader = (
         [m.name]: { name: m.name, url: m.url, status: "loading" },
       }));
       try {
-        map.loadImage(m.url, (err: Error | undefined, image: HTMLImageElement | ImageBitmap | undefined) => {
-          if (err) {
+        map.loadImage(m.url, (err: Error | null | undefined, image: HTMLImageElement | ImageBitmap | ImageData | null | undefined) => {
+          if (err || !image) {
             // Update error in the component state
             setImages((old) => ({
               ...old,
               [m.name]: { url: m.url, name: m.name, status: "errored" },
             }));
-            throw err;
+            if (err) throw err;
+            return;
           }
           try {
-            if (!map.hasImage(m.name) && image) {
+            if (!map.hasImage(m.name)) {
               map.addImage(m.name, image, { sdf: Boolean(m.sdf) });
             }
           } catch (e) {

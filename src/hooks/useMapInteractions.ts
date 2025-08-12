@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { LngLat } from "mapbox-gl";
+import EventData, { LngLat } from "mapbox-gl";
 
 export type InteractiveLayerProps = {
   /** Optional name of an "event handler pool". Only one callback per event pool
@@ -149,7 +149,7 @@ class MapboxEventHandlerPool {
     this.registered = false;
   }
 
-  public onClick: NativeMapEventHandler<mapboxgl.MapMouseEvent> = (e) => {
+  public onClick: NativeMapEventHandler<mapboxgl.MapMouseEvent> = (e: any) => { // TODO: Remove any
     // Find the highest-ranked clickable feature
     const highestPriorityClickableFeature =
       this.sortEventFeatures(e)?.find((f) => {
@@ -166,12 +166,12 @@ class MapboxEventHandlerPool {
 
     // Call the appropriate layer's registered onClick handler
     this.layers
-      .find((l) => l.id === highestPriorityClickableFeature.layer.id)
+      .find((l) => l.id === highestPriorityClickableFeature.layer?.id)
       ?.onClick?.(highestPriorityClickableFeature.properties.id, e);
   };
 
   // Handle hover events and drag events
-  public onMouseMove: NativeMapEventHandler = (e) => {
+  public onMouseMove: NativeMapEventHandler = (e: any) => { // TODO: Remove any
     // Don't do anything if we're currently dragging a point
     if (this.dragging !== null) return;
     const sortedFeatures = this.sortEventFeatures(e);
@@ -186,19 +186,19 @@ class MapboxEventHandlerPool {
     if (
       highestPriorityHoverableFeature?.properties?.id !==
         this.lastHoverFeature?.properties?.id ||
-      highestPriorityHoverableFeature?.layer.id !==
-        this.lastHoverFeature?.layer.id
+      highestPriorityHoverableFeature?.layer?.id !==
+        this.lastHoverFeature?.layer?.id
     ) {
       // Call the appropriate layer's registered onHoverLeave handler
       if ((this.lastHoverFeature?.properties?.id ?? null) !== null) {
         this.layers
-          .find((l) => l.id === this.lastHoverFeature?.layer.id)
+          .find((l) => l.id === this.lastHoverFeature?.layer?.id)
           ?.onHoverLeave?.(this.lastHoverFeature?.properties?.id!, e);
       }
 
       if ((highestPriorityHoverableFeature?.properties?.id ?? null) !== null) {
         this.layers
-          .find((l) => l.id === highestPriorityHoverableFeature?.layer.id)
+          .find((l) => l.id === highestPriorityHoverableFeature?.layer?.id)
           ?.onHoverEnter?.(highestPriorityHoverableFeature?.properties?.id, e);
       }
       this.lastHoverFeature = highestPriorityHoverableFeature;
@@ -223,7 +223,7 @@ class MapboxEventHandlerPool {
 
       // Fire event on appropriate layer's onDrag handler
       this.layers
-        .find((l) => l.id === this.dragging?.feature.layer.id)
+        .find((l) => l.id === this.dragging?.feature.layer?.id)
         ?.onDrag?.(
           this.dragging.feature.properties?.id,
           { longitude: offsetLngLat.lng, latitude: offsetLngLat.lat },
@@ -235,7 +235,7 @@ class MapboxEventHandlerPool {
 
   public onMouseDown: NativeMapEventHandler<
     mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent
-  > = (e) => {
+  > = (e: any) => { // TODO: Remove any
     // Don't handle a touchstart event if we're already dragging something
     if (e.type === "touchstart" && this.dragging !== null) {
       return;
@@ -268,7 +268,7 @@ class MapboxEventHandlerPool {
 
     // Fire event on appropriate layer's onDragStart handler
     this.layers
-      .find((l) => l.id === highestPriorityDragableFeature.layer.id)
+      .find((l) => l.id === highestPriorityDragableFeature.layer?.id)
       ?.onDragStart?.(
         highestPriorityDragableFeature.properties?.id!,
         offset,
@@ -282,7 +282,7 @@ class MapboxEventHandlerPool {
 
     // Fire event on appropriate layer's onDragEnd handler
     this.layers
-      .find((l) => l.id === this.dragging?.feature.layer.id)
+      .find((l) => l.id === this.dragging?.feature.layer?.id)
       ?.onDragEnd?.(this.dragging.feature.properties?.id!, e);
 
     this.dragging = null;
@@ -290,7 +290,7 @@ class MapboxEventHandlerPool {
     // Fire event on appropriate layer's onHoverLeave handler
     if (this.lastHoverFeature !== null) {
       this.layers
-        .find((l) => l.id === this.lastHoverFeature?.layer.id)
+        .find((l) => l.id === this.lastHoverFeature?.layer?.id)
         ?.onHoverLeave?.(this.lastHoverFeature.properties?.id!, e);
 
       this.lastHoverFeature = null;
@@ -322,7 +322,7 @@ class MapboxEventHandlerPool {
    *  each feature
    */
   private sortEventFeatures(
-    e: (mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent) & mapboxgl.EventData
+    e: (mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent) & typeof EventData
   ) {
     const features = this.map.queryRenderedFeatures(e.point, {
       layers: this.layers.map((l) => l.id),
@@ -335,7 +335,7 @@ class MapboxEventHandlerPool {
         priority,
         features:
           features
-            ?.filter((f) => f.layer.id === id)
+            ?.filter((f) => f.layer?.id === id)
             .sort(
               (a, b) =>
                 getDistanceToFeature(e.lngLat, a) -

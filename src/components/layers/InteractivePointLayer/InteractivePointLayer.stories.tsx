@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useContext } from "react";
 
-import { Story, Meta } from "@storybook/react/types-6-0";
+import { StoryFn, Meta } from "@storybook/react/types-6-0";
 
 import InteractivePointLayer, {
   InteractivePointLayerProps,
@@ -72,16 +72,16 @@ const bigTransparentCircleStyle: {
   },
 };
 
-const InteractivePointsStateManager: Story<
+const InteractivePointsStateManager: StoryFn<
   InteractivePointLayerProps & {
     points: InteractivePointData[];
     draggable: boolean;
     withBigTouchZones: boolean;
   }
-> = (props) => {
+> = (props: any) => {
   const { map } = useContext(MapboxMapContext);
   const [points, setPoints] = useState(
-    props.points.map((p) => ({
+    props.points.map((p: InteractivePointData) => ({
       ...p,
       properties: {
         id: p.id,
@@ -104,7 +104,7 @@ const InteractivePointsStateManager: Story<
       if (!map) return;
 
       // Move the point to the current pointer position
-      setPoints((_points) =>
+      setPoints((_points: any[]) =>
         _points.map((p) => (p.id !== id ? p : { ...p, ...newLocation }))
       );
     },
@@ -112,8 +112,8 @@ const InteractivePointsStateManager: Story<
   );
 
   const handleClick = useCallback((id: string | number) => {
-    setPoints((old) =>
-      old.map((o) =>
+    setPoints((old: any[]) =>
+      old.map((o: { id: string | number; properties: { selected: any; }; }) =>
         o.id === id
           ? {
               ...o,
@@ -125,8 +125,8 @@ const InteractivePointsStateManager: Story<
   }, []);
 
   const handleHoverEnter = useCallback((id: string | number) => {
-    setPoints((old) =>
-      old.map((o) =>
+    setPoints((old: any[]) =>
+      old.map((o: { id: string | number; properties: any; }) =>
         o.id === id
           ? {
               ...o,
@@ -138,8 +138,8 @@ const InteractivePointsStateManager: Story<
   }, []);
 
   const handleHoverLeave = useCallback((id: string | number) => {
-    setPoints((old) =>
-      old.map((o) =>
+    setPoints((old: any[]) =>
+      old.map((o: { id: string | number; properties: any; }) =>
         o.id === id
           ? {
               ...o,

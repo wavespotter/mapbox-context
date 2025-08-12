@@ -1,15 +1,12 @@
-import React, { useState, useCallback, useContext, useMemo } from "react";
-
-import { Story, Meta } from "@storybook/react/types-6-0";
-
+import { Meta, StoryFn } from "@storybook/react/types-6-0";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import InteractiveFillLayer, {
-    InteractiveFillLayerProps,
     InteractiveFillData,
+    InteractiveFillLayerProps,
 } from ".";
-import MapDecorator from "../../../storybook-helpers/map-decorator";
-
 import { InteractiveLineLayer, MapboxMapContext } from "../../..";
-import FillLayer, { PolygonRingCoordinates } from "../FillLayer";
+import MapDecorator from "../../../storybook-helpers/map-decorator";
+import { PolygonRingCoordinates } from "../FillLayer";
 
 export default {
     title: "Interactive Fill Layer",
@@ -76,8 +73,8 @@ const fillStyle: {
 };
 // Big transparent lines to increase the touch area of fills
 const bigTransparentLineStyle: {
-    layout: mapboxgl.LineLayout;
-    paint: mapboxgl.LinePaint;
+    layout: mapboxgl.LayoutSpecification;
+    paint: mapboxgl.PaintSpecification;
 } = {
     layout: {},
     paint: {
@@ -86,13 +83,13 @@ const bigTransparentLineStyle: {
     },
 };
 
-const InteractiveFillsStateManager: Story<InteractiveFillLayerProps & {
+const InteractiveFillsStateManager: StoryFn<InteractiveFillLayerProps & {
     polygons: InteractiveFillData[];
     withBigTouchZones: boolean;
-}> = (props) => {
+}> = (props: any) => {
     const {map} = useContext(MapboxMapContext);
     const [polygons, setPolygons] = useState(
-        props.polygons.map((p) => ({
+        props.polygons.map((p: { properties: any; id: any; }) => ({
             ...p,
             properties: {
                 ...p.properties,
@@ -106,7 +103,7 @@ const InteractiveFillsStateManager: Story<InteractiveFillLayerProps & {
         }))
     );
     const lines = useMemo(() =>
-        polygons.map(p => ({...p, coordinates: p.coordinates[0]})).map((p) => ({
+        polygons.map((p: { coordinates: any[]; }) => ({...p, coordinates: p.coordinates[0]})).map((p: { properties: any; id: any; }) => ({
             ...p,
             properties: {
                 ...p.properties,
@@ -132,16 +129,16 @@ const InteractiveFillsStateManager: Story<InteractiveFillLayerProps & {
             if (!map) return;
 
             // Move the point to the current pointer position
-            setPolygons((_fills) =>
-                _fills.map((p) => (p.id !== id ? p : {...p, ...newLocation}))
+            setPolygons((_fills: any[]) =>
+                _fills.map((p: { id: string | number; }) => (p.id !== id ? p : {...p, ...newLocation}))
             );
         },
         [map]
     );
 
     const handleClick = useCallback((id: string | number) => {
-        setPolygons((old) =>
-            old.map((o) =>
+        setPolygons((old: any[]) =>
+            old.map((o: { id: string | number; properties: { selected: any; }; }) =>
                 o.id === id
                     ? {
                         ...o,
@@ -153,8 +150,8 @@ const InteractiveFillsStateManager: Story<InteractiveFillLayerProps & {
     }, []);
 
     const handleHoverEnter = useCallback((id: string | number) => {
-        setPolygons((old) =>
-            old.map((o) =>
+        setPolygons((old: any[]) =>
+            old.map((o: { id: string | number; properties: any; }) =>
                 o.id === id
                     ? {
                         ...o,
@@ -166,8 +163,8 @@ const InteractiveFillsStateManager: Story<InteractiveFillLayerProps & {
     }, []);
 
     const handleHoverLeave = useCallback((id: string | number) => {
-        setPolygons((old) =>
-            old.map((o) =>
+        setPolygons((old: any[]) =>
+            old.map((o: { id: string | number; properties: any; }) =>
                 o.id === id
                     ? {
                         ...o,

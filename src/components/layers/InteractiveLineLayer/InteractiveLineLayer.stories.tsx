@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useContext } from "react";
 
-import { Story, Meta } from "@storybook/react/types-6-0";
+import { StoryFn, Meta } from "@storybook/react/types-6-0";
 
 import InteractiveLineLayer, {
   InteractiveLineLayerProps,
@@ -94,8 +94,8 @@ const mockLines = [
   },
 ];
 const lineStyle: {
-  layout: mapboxgl.LineLayout;
-  paint: mapboxgl.LinePaint;
+  layout: mapboxgl.LayoutSpecification;
+  paint: mapboxgl.PaintSpecification;
 } = {
   layout: {},
   paint: {
@@ -106,8 +106,8 @@ const lineStyle: {
 };
 // Big transparent lines to increase the touch area of lines
 const bigTransparentLineStyle: {
-  layout: mapboxgl.LineLayout;
-  paint: mapboxgl.LinePaint;
+  layout: mapboxgl.LayoutSpecification;
+  paint: mapboxgl.PaintSpecification;
 } = {
   layout: {},
   paint: {
@@ -116,15 +116,15 @@ const bigTransparentLineStyle: {
   },
 };
 
-const InteractiveLinesStateManager: Story<
+const InteractiveLinesStateManager: StoryFn<
   InteractiveLineLayerProps & {
     lines: InteractiveLineData[];
     withBigTouchZones: boolean;
   }
-> = (props) => {
+> = (props: any) => {
   const { map } = useContext(MapboxMapContext);
   const [lines, setLines] = useState(
-    props.lines.map((p) => ({
+    props.lines.map((p: { properties: any; id: any; }) => ({
       ...p,
       properties: {
         ...p.properties,
@@ -148,16 +148,16 @@ const InteractiveLinesStateManager: Story<
       if (!map) return;
 
       // Move the point to the current pointer position
-      setLines((_lines) =>
-        _lines.map((p) => (p.id !== id ? p : { ...p, ...newLocation }))
+      setLines((_lines: any[]) =>
+        _lines.map((p: { id: string | number; }) => (p.id !== id ? p : { ...p, ...newLocation }))
       );
     },
     [map]
   );
 
   const handleClick = useCallback((id: string | number) => {
-    setLines((old) =>
-      old.map((o) =>
+    setLines((old: any[]) =>
+      old.map((o: { id: string | number; properties: { selected: any; }; }) =>
         o.id === id
           ? {
               ...o,
@@ -169,8 +169,8 @@ const InteractiveLinesStateManager: Story<
   }, []);
 
   const handleHoverEnter = useCallback((id: string | number) => {
-    setLines((old) =>
-      old.map((o) =>
+    setLines((old: any[]) =>
+      old.map((o: { id: string | number; properties: any; }) =>
         o.id === id
           ? {
               ...o,
@@ -182,8 +182,8 @@ const InteractiveLinesStateManager: Story<
   }, []);
 
   const handleHoverLeave = useCallback((id: string | number) => {
-    setLines((old) =>
-      old.map((o) =>
+    setLines((old: any[]) =>
+      old.map((o: { id: string | number; properties: any; }) =>
         o.id === id
           ? {
               ...o,

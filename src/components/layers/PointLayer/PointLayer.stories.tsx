@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { Story, Meta } from "@storybook/react/types-6-0";
+import { StoryFn, Meta } from "@storybook/react/types-6-0";
 
 import PointLayer, { PointLayerProps } from ".";
 import MapDecorator from "../../../storybook-helpers/map-decorator";
@@ -54,7 +54,7 @@ const symbolStyle: {
   paint: {},
 };
 
-const Template: Story<PointLayerProps> = (args) => <PointLayer {...args} />;
+const Template: StoryFn<PointLayerProps> = (args: JSX.IntrinsicAttributes & PointLayerProps & { children?: React.ReactNode; }) => <PointLayer {...args} />;
 
 export const Circles = Template.bind({});
 Circles.args = {
@@ -79,7 +79,7 @@ ManyPoints.args = {
   style: circleStyle,
 };
 
-export const Animated: Story<PointLayerProps> = (args) => {
+export const Animated: StoryFn<PointLayerProps> = () => {
   const [points, setPoints] = useState(mockPoints);
   useEffect(() => {
     let rafID = 0;

@@ -1,8 +1,9 @@
-import React, { useContext, useRef, useMemo } from "react";
-import { MapboxContext } from "../../MapboxMap";
-import { featureCollection, polygon, Position } from "@turf/helpers";
-import useMapLayer from "../../../hooks/useMapLayer";
+import { featureCollection, polygon } from "@turf/helpers";
+import type { Position } from "geojson";
+import React, { useContext, useMemo, useRef } from "react";
 import useImageLoader from "../../../hooks/use-image-loader";
+import useMapLayer from "../../../hooks/useMapLayer";
+import { MapboxContext } from "../../MapboxMap";
 
 export type PolygonRingCoordinates = (
   | Position
@@ -94,7 +95,9 @@ const FillLayer: React.FC<FillLayerProps> = ({
           type: "FeatureCollection",
           features: [],
         },
-    loadingComplete ? style : { layout: {}, paint: {} },
+    loadingComplete
+      ? style
+      : { layout: {} as any, paint: {} as any }, // TODO: Remove anys
     onAdd,
     beforeLayer
   );

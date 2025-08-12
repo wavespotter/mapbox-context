@@ -1,4 +1,4 @@
-import { Map, AnyLayout, AnyPaint } from "mapbox-gl";
+import { Map, LayoutSpecification, PaintSpecification } from "mapbox-gl";
 import { useEffect } from "react";
 import useDeepCompareEffect from "use-deep-compare-effect";
 
@@ -7,7 +7,10 @@ type GeoJSONSourceDataType =
   | GeoJSON.FeatureCollection<GeoJSON.Geometry>
   | String;
 
-const useMapLayer = <TLayout = AnyLayout, TPaint = AnyPaint>(
+const useMapLayer = <
+  TLayout extends LayoutSpecification = LayoutSpecification,
+  TPaint extends PaintSpecification = PaintSpecification
+>(
   map: Map | null,
   id: string,
   type: any,
@@ -62,7 +65,7 @@ const useMapLayer = <TLayout = AnyLayout, TPaint = AnyPaint>(
 const useMapLayerStyle = (
   map: Map | null,
   layerID: string,
-  style: { layout: AnyLayout; paint: AnyPaint }
+  style: { layout: LayoutSpecification; paint: PaintSpecification }
 ) => {
   // Update style whenever it changes
   useDeepCompareEffect(() => {
@@ -72,14 +75,14 @@ const useMapLayerStyle = (
     for (const prop in style.paint) {
       map.setPaintProperty(
         layerID,
-        prop,
+        prop as keyof PaintSpecification,
         style.paint[prop as keyof typeof style.paint]
       );
     }
     for (const prop in style.layout) {
       map.setLayoutProperty(
         layerID,
-        prop,
+        prop as keyof LayoutSpecification,
         style.layout[prop as keyof typeof style.layout]
       );
     }
@@ -100,7 +103,15 @@ const useMapSourceGeoJSON = (
     if (source?.type !== "geojson") {
       console.warn("Source should be geojson. Cannot set data.");
     } else {
-      source.setData(geojson);
+      // TODO: Unsure of this one
+      // Ensure geojson is a native string or a valid GeoJSON object
+      const data =
+        typeof geojson === "string"
+          ? geojson
+          : geojson instanceof String
+          ? geojson.toString()
+          : geojson;
+      source.setData(data);
     }
   }, [map, id, geojson]);
 };
