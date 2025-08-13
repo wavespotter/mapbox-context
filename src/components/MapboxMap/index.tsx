@@ -13,7 +13,7 @@ import MapboxContext, {
   MapboxMapTransform,
 } from "../../contexts/MapboxContext";
 
-export type MapboxMapProps = {
+export interface MapboxMapProps {
   token: string;
   styleUrl: string;
   width: string;
@@ -30,7 +30,7 @@ export type MapboxMapProps = {
   dragRotate?: boolean;
   touchZoomRotate?: boolean | { enableRotation: boolean };
   touchPitch?: boolean;
-};
+}
 
 /** A modern Mapbox React component using hooks and context
  *  that supports composable, declarative data layers
@@ -51,7 +51,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   touchZoomRotate = true,
   touchPitch = true,
 }) => {
-  let mapContainer = useRef<HTMLDivElement>(null);
+  const mapContainer = useRef<HTMLDivElement>(null);
 
   // Store the current Mapbox map instance in component state
   const [map, setMap] = useState<MbMap | null>(null);
@@ -75,9 +75,9 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         padding = 0;
       }
     } else if (padding) {
-      const { top, right, bottom, left } = padding ?? {};
-      const minWidth = (right || 0) + (left || 0);
-      const minHeight = (top || 0) + (bottom || 0);
+      const { top = 0, right = 0, bottom = 0, left = 0 } = padding ?? {};
+      const minWidth = right + left;
+      const minHeight = top + bottom;
       if (minHeight >= height || minWidth >= width) {
         padding = 0;
       }
@@ -161,7 +161,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   }, [dragRotate, map]);
 
   useDeepCompareEffectNoCheck(() => {
-    if (!!touchZoomRotate) {
+    if (touchZoomRotate) {
       map?.touchZoomRotate.enable();
       map?.touchZoomRotate.enableRotation();
       if (touchZoomRotate instanceof Object) {
@@ -184,7 +184,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
     }
   }, [touchPitch, map]);
 
-  const zoomControl = useRef<any>();
+  const zoomControl = useRef<ZoomControl>();
   useEffect(() => {
     if (showControls) {
       zoomControl.current = new ZoomControl();

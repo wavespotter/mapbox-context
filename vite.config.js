@@ -1,15 +1,20 @@
-import { defineConfig } from "vite";
-import { extname, relative, resolve } from "path";
-import { fileURLToPath } from "node:url";
 import { glob } from "glob";
+import { dirname } from "node:path";
+import { fileURLToPath, URL } from "node:url";
+import { extname, relative, resolve } from "path";
+import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 
 export default defineConfig({
-  plugins: [dts({})],
+  plugins: [
+    dts({
+      exclude: ["**/*.stories.tsx", "**/storybook-helpers/*"],
+    }),
+  ],
   build: {
     copyPublicDir: false,
     lib: {
-      entry: resolve(__dirname, "src/main.ts"),
+      entry: resolve(dirname(import.meta.url), "src/main.ts"),
       formats: ["es"],
     },
     rollupOptions: {
@@ -17,7 +22,7 @@ export default defineConfig({
         "react",
         "react/jsx-runtime",
         "@mapbox-controls/zoom",
-        "@turf/helpers",
+        "@turf/turf",
         "fast-equals",
         "mapbox-gl",
         "use-deep-compare-effect",
@@ -26,7 +31,12 @@ export default defineConfig({
         // https://rollupjs.org/configuration-options/#input
         glob
           .sync("src/**/*.{ts,tsx}", {
-            ignore: ["src/**/*.d.ts"],
+            ignore: [
+              "src/storybook-helpers/*",
+              "src/**/*.d.ts",
+              "src/**/*.spec.{ts,tsx}",
+              "src/**/*.stories.{ts,tsx}",
+            ],
           })
           .map((file) => [
             // 1. The name of the entry point

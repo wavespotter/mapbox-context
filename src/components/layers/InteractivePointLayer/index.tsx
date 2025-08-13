@@ -6,7 +6,7 @@ import useMapLayerInteractions, {
   InteractiveLayerProps,
 } from "../../../hooks/useMapInteractions";
 
-export type InteractivePointData = {
+export interface InteractivePointData {
   /** Unique ID for this point that will be passed to all interaction event
    *  handlers
    */
@@ -30,7 +30,7 @@ export type InteractivePointData = {
     /** Flag indicating whether this point should respond to hover events */
     hoverable?: boolean;
   };
-};
+}
 
 export type InteractivePointLayerProps = PointLayerProps &
   InteractiveLayerProps & {

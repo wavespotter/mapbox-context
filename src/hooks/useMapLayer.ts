@@ -1,11 +1,11 @@
-import { Map, LayoutSpecification, PaintSpecification } from "mapbox-gl";
+import { Map, LayoutSpecification, PaintSpecification, LayerSpecification } from "mapbox-gl";
 import { useEffect } from "react";
 import useDeepCompareEffect from "use-deep-compare-effect";
 
 type GeoJSONSourceDataType =
   | GeoJSON.Feature<GeoJSON.Geometry>
   | GeoJSON.FeatureCollection<GeoJSON.Geometry>
-  | String;
+  | string;
 
 const useMapLayer = <
   TLayout extends LayoutSpecification = LayoutSpecification,
@@ -13,7 +13,7 @@ const useMapLayer = <
 >(
   map: Map | null,
   id: string,
-  type: any,
+  type: LayerSpecification["type"],
   geojson: GeoJSONSourceDataType,
   style: { layout: TLayout; paint: TPaint },
   onAdd?: (id: string) => void,
@@ -45,13 +45,13 @@ const useMapLayer = <
       try {
         map.removeLayer(id);
         map.removeSource(id);
-      } catch (e) {
+      } catch (_e) {
         // Map was already un-mounted;
       }
     };
     // Ignore changes to style — they will be updated separately via the
     // `useMapLayerStyle` hook
-    // eslint-disable-next-line
+     
   }, [map, id, type]);
 
   // Synchronize style state

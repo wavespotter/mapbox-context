@@ -1,7 +1,7 @@
 import React, { useContext, useCallback } from "react";
 import MapboxContext from "../../../contexts/MapboxContext";
 
-type MapboxDOMLayerProps = {
+interface MapboxDOMLayerProps {
   /** Geographic coordinates of the element. The component's children will
    *  automatically move with the map to stay at this point.
    */
@@ -31,7 +31,7 @@ type MapboxDOMLayerProps = {
    *  zoom level
    */
   zoomFunction?: (z: number) => number;
-};
+}
 
 /** Pin any DOM element to a specific position on the Mapbox map. */
 const MapboxDOMLayer: React.FC<MapboxDOMLayerProps> = ({
@@ -51,7 +51,7 @@ const MapboxDOMLayer: React.FC<MapboxDOMLayerProps> = ({
   // Forward scroll events to the Mapbox map
   const scrollHandler = useCallback(
     (ev: React.WheelEvent<HTMLDivElement>) => {
-      ev.preventDefault;
+      ev.preventDefault();
       map
         ?.getCanvas()
         .dispatchEvent(new WheelEvent(ev.nativeEvent.type, ev.nativeEvent));

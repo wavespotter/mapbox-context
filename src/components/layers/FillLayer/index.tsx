@@ -1,4 +1,4 @@
-import { featureCollection, polygon } from "@turf/helpers";
+import { featureCollection, polygon } from "@turf/turf";
 import type { Position } from "geojson";
 import { LayoutSpecification, PaintSpecification } from "mapbox-gl";
 import React, { useContext, useMemo, useRef } from "react";
@@ -10,7 +10,7 @@ export type PolygonRingCoordinates = (
   | Position
   | { latitude: number; longitude: number }
 )[];
-export type FillLayerProps = {
+export interface FillLayerProps {
   polygons:
     | {
         id: string | number;
@@ -41,7 +41,7 @@ export type FillLayerProps = {
 
   id?: string;
   beforeLayer?: string;
-};
+}
 
 // Used to generate unique layer and source IDs if one is not provided
 let idIncrement = 0;

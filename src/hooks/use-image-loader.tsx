@@ -2,7 +2,7 @@ import { deepEqual } from "fast-equals";
 import { Map as MbMap } from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
 
-export type ImageDefinition = { url: string; name: string; sdf?: boolean };
+export interface ImageDefinition { url: string; name: string; sdf?: boolean }
 
 export type ImageStatus = Record<
   string,
@@ -49,7 +49,9 @@ const useImageLoader = (
           ...old,
           [m.name]: { name: m.name, url: m.url, status: "deleted" },
         }));
-      } catch (e) {}
+      } catch (_e) {
+        // TODO: Determine why we are ignoring errors here
+      }
     });
 
     const imagestoAdd = imageDefs?.filter(

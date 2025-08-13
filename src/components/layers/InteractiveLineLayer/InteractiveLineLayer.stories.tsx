@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback, useContext, useState } from "react";
 
 import { Meta, StoryFn } from "@storybook/react/types-6-0";
@@ -138,8 +139,9 @@ const InteractiveLinesStateManager: StoryFn<
       },
     }))
   );
-
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const handleDragStart = useCallback(() => {}, []);
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const handleDragEnd = useCallback(() => {}, []);
   const handleDrag = useCallback(
     (

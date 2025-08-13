@@ -1,4 +1,4 @@
-import { featureCollection, point } from "@turf/helpers";
+import { featureCollection, point } from "@turf/turf";
 import type { LayoutSpecification, PaintSpecification } from "mapbox-gl";
 import React, { useContext, useMemo, useRef } from "react";
 import useImageLoader, {
@@ -7,7 +7,7 @@ import useImageLoader, {
 import useMapLayer from "../../../hooks/useMapLayer";
 import { MapboxContext } from "../../MapboxMap";
 
-export type PointLayerProps = {
+export interface PointLayerProps {
   points: {
     id: string | number;
     latitude: number;
@@ -38,7 +38,7 @@ export type PointLayerProps = {
 
   id?: string;
   beforeLayer?: string;
-};
+}
 
 // Used to generate unique layer and source IDs if one is not provided
 let idIncrement = 0;

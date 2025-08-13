@@ -1,4 +1,4 @@
-import { featureCollection, lineString } from "@turf/helpers";
+import { featureCollection, lineString } from "@turf/turf";
 import type { Position } from "geojson";
 import { LayoutSpecification, PaintSpecification } from "mapbox-gl";
 import React, { useContext, useMemo, useRef } from "react";
@@ -9,7 +9,7 @@ export type LineCoordinates = (
   | Position
   | { latitude: number; longitude: number }
 )[];
-export type LineLayerProps = {
+export interface LineLayerProps {
   lines:
     | {
         id: string | number;
@@ -35,7 +35,7 @@ export type LineLayerProps = {
 
   id?: string;
   beforeLayer?: string;
-};
+}
 
 // Used to generate unique layer and source IDs if one is not provided
 let idIncrement = 0;

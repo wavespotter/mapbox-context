@@ -6,7 +6,7 @@ import useMapLayerInteractions, {
   InteractiveLayerProps,
 } from "../../../hooks/useMapInteractions";
 
-type InteractiveLineProperties = {
+interface InteractiveLineProperties {
   /** Flag indicating whether this line should respond to drag events */
   draggable?: boolean;
 
@@ -15,8 +15,8 @@ type InteractiveLineProperties = {
 
   /** Flag indicating whether this line should respond to hover events */
   hoverable?: boolean;
-};
-export type InteractiveLineData = {
+}
+export interface InteractiveLineData {
   /** Unique ID for this line that will be passed to all interaction event
    *  handlers
    */
@@ -28,7 +28,7 @@ export type InteractiveLineData = {
    *  in the `properties` key
    */
   properties: GeoJSON.GeoJsonProperties & InteractiveLineProperties;
-};
+}
 
 export type InteractiveLineLayerProps = LineLayerProps &
   InteractiveLayerProps & {
