@@ -1,5 +1,5 @@
 import { deepEqual } from "fast-equals";
-import { Map as MbMap } from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
 
 export interface ImageDefinition { url: string; name: string; sdf?: boolean }
@@ -18,7 +18,7 @@ type ImageStatus = Record<
  *  that contains the status of each loaded image.
  */
 const useImageLoader = (
-  map: MbMap | null,
+  map: mapboxgl.Map | null,
   imageDefs: ImageDefinition[] | undefined
 ) => {
   const recentImageDefs = useRef<ImageDefinition[] | undefined>();

@@ -1,8 +1,8 @@
-import { Map as MbMap } from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 import React from "react";
 
 interface MapboxContextType {
-  map: MbMap | null;
+  map: mapboxgl.Map | null;
   width: number;
   height: number;
 

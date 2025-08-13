@@ -1,10 +1,9 @@
 import { useEffect } from "react";
-import {
+import mapboxgl, {
   LngLat,
   GeoJSONFeature,
   MapMouseEvent,
   MapTouchEvent,
-  Map as MbMap,
   Point,
 } from "mapbox-gl";
 
@@ -57,7 +56,7 @@ type MapDragHandler = (
 ) => void;
 
 interface MapInteractionHandlerOptions {
-  map: MbMap | null;
+  map: mapboxgl.Map | null;
   layerID: string | null;
 
   /** An interaction pool can be used to ensure that only one event handler
@@ -110,7 +109,7 @@ class MapboxEventHandlerPool {
 
   private registered = false;
 
-  constructor(private map: MbMap, private name: string) {
+  constructor(private map: mapboxgl.Map, private name: string) {
     this.map = map;
     this.layers = [];
     this.register();
@@ -371,13 +370,13 @@ function getDistanceToFeature(eventPoint: LngLat, f: GeoJSONFeature) {
 }
 
 /** A singleton mapping of event handler pools for each Mapbox Map */
-const eventHandlerPools = new Map<MbMap, Map<string, MapboxEventHandlerPool>>();
+const eventHandlerPools = new Map<mapboxgl.Map, Map<string, MapboxEventHandlerPool>>();
 
 /** Gets an event handler pool with the given name on the given Mapbox GL map.
  *  Creates the pool if it doesn't already exist.
  */
 function getEventHandlerPool(
-  map: MbMap,
+  map: mapboxgl.Map,
   poolName: string
 ): MapboxEventHandlerPool {
   let pools = eventHandlerPools.get(map);

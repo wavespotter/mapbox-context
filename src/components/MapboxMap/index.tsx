@@ -1,9 +1,8 @@
-import {
+import mapboxgl, {
   LngLatBoundsLike,
   LngLatLike,
   MapOptions,
   RequestTransformFunction,
-  Map as MbMap,
 } from "mapbox-gl";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDeepCompareEffectNoCheck } from "use-deep-compare-effect";
@@ -54,7 +53,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   const mapContainer = useRef<HTMLDivElement>(null);
 
   // Store the current Mapbox map instance in component state
-  const [map, setMap] = useState<MbMap | null>(null);
+  const [map, setMap] = useState<mapboxgl.Map | null>(null);
 
   // Store map transform data in state so we can pass it to children
   const [transform, setTransform] = useState<MapboxMapTransform | null>(null);
@@ -94,7 +93,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
 
   // Create a new Mapbox map instance whenever token or style URL prop changes
   useEffect(() => {
-    const newMap = new MbMap({
+    const newMap = new mapboxgl.Map({
       container: mapContainer.current ?? "",
       style: styleUrl,
       attributionControl: false,
