@@ -1,13 +1,11 @@
+import type { MapEventOf, MapEventType } from "mapbox-gl";
 import { useContext, useEffect } from "react";
 import MapboxContext from "../contexts/MapboxContext";
 
-type HandlerType<T extends keyof mapboxgl.MapEventType> = (
-  ev: mapboxgl.MapEventType[T] & mapboxgl.EventData
-) => void;
-const useMapEvent: <T extends keyof mapboxgl.MapEventType>(
+const useMapEvent = <T extends MapEventType>(
   type: T,
-  handler: HandlerType<T>
-) => void = (type, handler) => {
+  handler: (event: MapEventOf<T>) => void
+) => {
   const { map } = useContext(MapboxContext);
 
   useEffect(() => {

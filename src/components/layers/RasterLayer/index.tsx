@@ -1,14 +1,19 @@
-import React, { useEffect, useContext } from "react";
-import MapboxContext from "../../../contexts/MapboxContext";
+import {
+  LayoutSpecification,
+  PaintSpecification,
+  SourceSpecification,
+} from "mapbox-gl";
+import React, { useContext, useEffect } from "react";
 import useDeepCompareEffect from "use-deep-compare-effect";
+import MapboxContext from "../../../contexts/MapboxContext";
 
 const RasterLayer: React.FC<{
-  sourceOptions: mapboxgl.RasterSource | mapboxgl.ImageSourceRaw;
+  sourceOptions: SourceSpecification;
   minzoom?: number;
   maxzoom?: number;
   id: string;
-  layoutOptions?: mapboxgl.RasterLayout;
-  paintOptions?: mapboxgl.RasterPaint;
+  layoutOptions?: LayoutSpecification;
+  paintOptions?: PaintSpecification;
   beforeLayer?: string;
   opacity?: number;
 }> = ({
@@ -49,7 +54,9 @@ const RasterLayer: React.FC<{
       try {
         map.removeLayer(id);
         map.removeSource(id);
-      } catch (e) {}
+      } catch (e) {
+        console.warn("Error removing Raster layer:", e);
+      }
     };
   }, [
     sourceOptions,

@@ -1,13 +1,18 @@
-import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import mapboxgl, {
+  LngLatBoundsLike,
+  LngLatLike,
+  MapOptions,
+  RequestTransformFunction,
+} from "mapbox-gl";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDeepCompareEffectNoCheck } from "use-deep-compare-effect";
-import mapboxgl from "mapbox-gl";
 
-import ZoomControl from "mapbox-gl-controls/lib/zoom";
+import ZoomControl from "@mapbox-controls/zoom";
 import MapboxContext, {
   MapboxMapTransform,
 } from "../../contexts/MapboxContext";
 
-export type MapboxMapProps = {
+export interface MapboxMapProps {
   token: string;
   styleUrl: string;
   width: string;
@@ -15,16 +20,16 @@ export type MapboxMapProps = {
   showControls?: boolean;
   scrollZoom?: boolean;
   fitBounds?: {
-    bounds: mapboxgl.LngLatBoundsLike;
-    options?: mapboxgl.FitBoundsOptions;
+    bounds: LngLatBoundsLike;
+    options?: MapOptions["fitBoundsOptions"];
   };
-  transformRequest?: mapboxgl.TransformRequestFunction;
-  center?: mapboxgl.LngLatLike;
+  transformRequest?: RequestTransformFunction;
+  center?: LngLatLike;
   zoom?: number;
   dragRotate?: boolean;
   touchZoomRotate?: boolean | { enableRotation: boolean };
   touchPitch?: boolean;
-};
+}
 
 /** A modern Mapbox React component using hooks and context
  *  that supports composable, declarative data layers
@@ -45,7 +50,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   touchZoomRotate = true,
   touchPitch = true,
 }) => {
-  let mapContainer = useRef<HTMLDivElement>(null);
+  const mapContainer = useRef<HTMLDivElement>(null);
 
   // Store the current Mapbox map instance in component state
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
@@ -69,7 +74,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         padding = 0;
       }
     } else if (padding) {
-      const { top, right, bottom, left } = padding ?? {};
+      const { top = 0, right = 0, bottom = 0, left = 0 } = padding ?? {};
       const minWidth = right + left;
       const minHeight = top + bottom;
       if (minHeight >= height || minWidth >= width) {
@@ -105,11 +110,13 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       const bearing = newMap.getBearing();
       const pitch = newMap.getPitch();
       // no need to update the state if the values are the same
-      if (zoom !== transformRef.current?.zoom
-        || center[0] !== transformRef.current?.center[0]
-        || center[1] !== transformRef.current?.center[1]
-        || bearing !== transformRef.current?.bearing
-        || pitch !== transformRef.current?.pitch) {
+      if (
+        zoom !== transformRef.current?.zoom ||
+        center[0] !== transformRef.current?.center[0] ||
+        center[1] !== transformRef.current?.center[1] ||
+        bearing !== transformRef.current?.bearing ||
+        pitch !== transformRef.current?.pitch
+      ) {
         setTransform({
           zoom,
           center,
@@ -153,7 +160,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   }, [dragRotate, map]);
 
   useDeepCompareEffectNoCheck(() => {
-    if (!!touchZoomRotate) {
+    if (touchZoomRotate) {
       map?.touchZoomRotate.enable();
       map?.touchZoomRotate.enableRotation();
       if (touchZoomRotate instanceof Object) {
@@ -176,25 +183,28 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
     }
   }, [touchPitch, map]);
 
-  const zoomControl = useRef<any>();
+  const zoomControl = useRef<ZoomControl>();
   useEffect(() => {
     if (showControls) {
-      zoomControl.current = new ZoomControl("top-right");
-
-      map?.addControl(zoomControl.current);
+      zoomControl.current = new ZoomControl();
+      map?.addControl(zoomControl.current, "top-right");
     } else {
       if (zoomControl.current) map?.removeControl(zoomControl.current);
     }
   }, [showControls, map]);
 
-  const { width: containerBoundsWidth, height: containerBoundsHeight } = mapContainer.current?.getBoundingClientRect() || {};
+  const { width: containerBoundsWidth, height: containerBoundsHeight } =
+    mapContainer.current?.getBoundingClientRect() || {};
 
-  const providerValue = useMemo(() => ({
-    map,
-    width: containerBoundsWidth || 0,
-    height: containerBoundsHeight || 0,
-    transform,
-  }), [map, containerBoundsWidth, containerBoundsHeight, transform]);
+  const providerValue = useMemo(
+    () => ({
+      map,
+      width: containerBoundsWidth || 0,
+      height: containerBoundsHeight || 0,
+      transform,
+    }),
+    [map, containerBoundsWidth, containerBoundsHeight, transform]
+  );
 
   return (
     <>
@@ -203,9 +213,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
           ref={mapContainer}
           style={{ position: "absolute", width, height }}
         />
-        <MapboxContext.Provider
-          value={providerValue}
-        >
+        <MapboxContext.Provider value={providerValue}>
           {children}
         </MapboxContext.Provider>
       </div>

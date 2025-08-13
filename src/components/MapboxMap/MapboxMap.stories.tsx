@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Story, Meta } from "@storybook/react/types-6-0";
+import { StoryFn, Meta } from "@storybook/react/types-6-0";
 
 import MapboxMap, { MapboxMapProps } from "./";
 
@@ -18,7 +18,7 @@ export default {
   },
 } as Meta;
 
-const Template: Story<MapboxMapProps> = (args) => <MapboxMap {...args} />;
+const Template: StoryFn<MapboxMapProps> = (args: MapboxMapProps) => <MapboxMap {...args} />;
 
 export const Defaults = Template.bind({});
 Defaults.args = {};

@@ -3,10 +3,10 @@ import { CustomLayerInterface } from "mapbox-gl";
 
 import MapboxContext from "../../../contexts/MapboxContext";
 
-type CustomLayerProps = {
+interface CustomLayerProps {
   renderer: CustomLayerInterface;
   beforeLayer?: string;
-};
+}
 
 const CustomLayer: React.FC<CustomLayerProps> = ({ renderer, beforeLayer }) => {
   const { map } = useContext(MapboxContext);
@@ -18,7 +18,9 @@ const CustomLayer: React.FC<CustomLayerProps> = ({ renderer, beforeLayer }) => {
     return () => {
       try {
         map.removeLayer(id);
-      } catch (e) {}
+      } catch (e) {
+        console.warn("Error removing custom layer:", e);
+      }
     };
   }, [renderer, beforeLayer, map]);
 

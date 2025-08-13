@@ -1,16 +1,24 @@
-import { Map, AnyLayout, AnyPaint } from "mapbox-gl";
+import {
+  Map,
+  LayoutSpecification,
+  PaintSpecification,
+  LayerSpecification,
+} from "mapbox-gl";
 import { useEffect } from "react";
 import useDeepCompareEffect from "use-deep-compare-effect";
 
 type GeoJSONSourceDataType =
   | GeoJSON.Feature<GeoJSON.Geometry>
   | GeoJSON.FeatureCollection<GeoJSON.Geometry>
-  | String;
+  | string;
 
-const useMapLayer = <TLayout = AnyLayout, TPaint = AnyPaint>(
+const useMapLayer = <
+  TLayout extends LayoutSpecification = LayoutSpecification,
+  TPaint extends PaintSpecification = PaintSpecification
+>(
   map: Map | null,
   id: string,
-  type: any,
+  type: LayerSpecification["type"],
   geojson: GeoJSONSourceDataType,
   style: { layout: TLayout; paint: TPaint },
   onAdd?: (id: string) => void,
@@ -25,14 +33,16 @@ const useMapLayer = <TLayout = AnyLayout, TPaint = AnyPaint>(
       data: { type: "FeatureCollection", features: [] },
     });
 
-    map.addLayer({
-      id: id,
-      paint: style.paint,
-      layout: style.layout,
-      source: id,
-      type,
-      
-    }, beforeLayer);
+    map.addLayer(
+      {
+        id: id,
+        paint: style.paint,
+        layout: style.layout,
+        source: id,
+        type,
+      },
+      beforeLayer
+    );
 
     onAdd?.(id);
 
@@ -40,13 +50,12 @@ const useMapLayer = <TLayout = AnyLayout, TPaint = AnyPaint>(
       try {
         map.removeLayer(id);
         map.removeSource(id);
-      } catch (e) {
+      } catch (_e) {
         // Map was already un-mounted;
       }
     };
     // Ignore changes to style — they will be updated separately via the
     // `useMapLayerStyle` hook
-    // eslint-disable-next-line
   }, [map, id, type]);
 
   // Synchronize style state
@@ -62,7 +71,7 @@ const useMapLayer = <TLayout = AnyLayout, TPaint = AnyPaint>(
 const useMapLayerStyle = (
   map: Map | null,
   layerID: string,
-  style: { layout: AnyLayout; paint: AnyPaint }
+  style: { layout: LayoutSpecification; paint: PaintSpecification }
 ) => {
   // Update style whenever it changes
   useDeepCompareEffect(() => {
@@ -70,18 +79,12 @@ const useMapLayerStyle = (
     // Copy over paint and layout properties one by one because that's the way
     // Mapbox rolls.
     for (const prop in style.paint) {
-      map.setPaintProperty(
-        layerID,
-        prop,
-        style.paint[prop as keyof typeof style.paint]
-      );
+      const typedProp = prop as keyof PaintSpecification;
+      map.setPaintProperty(layerID, typedProp, style.paint[typedProp]);
     }
     for (const prop in style.layout) {
-      map.setLayoutProperty(
-        layerID,
-        prop,
-        style.layout[prop as keyof typeof style.layout]
-      );
+      const typedProp = prop as keyof LayoutSpecification;
+      map.setLayoutProperty(layerID, typedProp, style.layout[typedProp]);
     }
   }, [map, layerID, style]);
 };
@@ -100,7 +103,14 @@ const useMapSourceGeoJSON = (
     if (source?.type !== "geojson") {
       console.warn("Source should be geojson. Cannot set data.");
     } else {
-      source.setData(geojson);
+      // Ensure geojson is a native string or a valid GeoJSON object
+      const data =
+        typeof geojson === "string"
+          ? geojson
+          : geojson instanceof String
+          ? geojson.toString()
+          : geojson;
+      source.setData(data);
     }
   }, [map, id, geojson]);
 };

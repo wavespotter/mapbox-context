@@ -1,23 +1,23 @@
 {
+  "rootDir": "src",
   "compilerOptions": {
+    "target": "ES2022",
+    "baseUrl": "src",
+    "lib": ["dom", "dom.iterable", "es2022"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "forceConsistentCasingInFileNames": false,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "downlevelIteration": true,
     "isolatedModules": true,
+    "noEmit": true,
     "jsx": "react",
-
-    "outDir": "build",
-    "target": "es5",
-    "lib": ["es6", "dom", "dom.iterable", "esnext"],
-    "declaration": true,
-    "module": "commonjs"
+    "typeRoots": ["./node_modules/@types", "node"]
   },
   "include": ["src"],
-  "exclude": ["node_modules", "build"]
+  "exclude": ["node_modules", "build", "knip.config.ts"]
 }

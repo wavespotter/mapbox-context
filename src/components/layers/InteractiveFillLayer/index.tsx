@@ -6,7 +6,7 @@ import useMapLayerInteractions, {
   InteractiveLayerProps,
 } from "../../../hooks/useMapInteractions";
 
-type InteractiveFillProperties = {
+interface InteractiveFillProperties {
   /** Flag indicating whether this fill should respond to drag events */
   draggable?: boolean;
 
@@ -15,8 +15,8 @@ type InteractiveFillProperties = {
 
   /** Flag indicating whether this fill should respond to hover events */
   hoverable?: boolean;
-};
-export type InteractiveFillData = {
+}
+export interface InteractiveFillData {
   /** Unique ID for this point that will be passed to all interaction event
    *  handlers
    */
@@ -28,7 +28,7 @@ export type InteractiveFillData = {
    *  in the `properties` key
    */
   properties: GeoJSON.GeoJsonProperties & InteractiveFillProperties;
-};
+}
 
 export type InteractiveFillLayerProps = FillLayerProps &
   InteractiveLayerProps & {

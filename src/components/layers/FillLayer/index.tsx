@@ -1,14 +1,16 @@
-import React, { useContext, useRef, useMemo } from "react";
-import { MapboxContext } from "../../MapboxMap";
-import { featureCollection, polygon, Position } from "@turf/helpers";
-import useMapLayer from "../../../hooks/useMapLayer";
+import { featureCollection, polygon } from "@turf/turf";
+import type { Position } from "geojson";
+import { LayoutSpecification, PaintSpecification } from "mapbox-gl";
+import React, { useContext, useMemo, useRef } from "react";
 import useImageLoader from "../../../hooks/use-image-loader";
+import useMapLayer from "../../../hooks/useMapLayer";
+import { MapboxContext } from "../../MapboxMap";
 
 export type PolygonRingCoordinates = (
   | Position
   | { latitude: number; longitude: number }
 )[];
-export type FillLayerProps = {
+export interface FillLayerProps {
   polygons:
     | {
         id: string | number;
@@ -18,8 +20,8 @@ export type FillLayerProps = {
     | GeoJSON.FeatureCollection<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
 
   style: {
-    layout: mapboxgl.FillLayout;
-    paint: mapboxgl.FillPaint;
+    layout: LayoutSpecification;
+    paint: PaintSpecification;
   };
 
   /** An optional list of images to load for use in fill layers. Each object
@@ -39,7 +41,7 @@ export type FillLayerProps = {
 
   id?: string;
   beforeLayer?: string;
-};
+}
 
 // Used to generate unique layer and source IDs if one is not provided
 let idIncrement = 0;

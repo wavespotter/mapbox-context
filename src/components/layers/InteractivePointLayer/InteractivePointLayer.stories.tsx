@@ -1,13 +1,15 @@
-import React, { useState, useCallback, useContext } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useCallback, useContext, useState } from "react";
 
-import { Story, Meta } from "@storybook/react/types-6-0";
+import { Meta, StoryFn } from "@storybook/react/types-6-0";
 
 import InteractivePointLayer, {
-  InteractivePointLayerProps,
   InteractivePointData,
+  InteractivePointLayerProps,
 } from ".";
 import MapDecorator from "../../../storybook-helpers/map-decorator";
 
+import { CircleLayerSpecification } from "mapbox-gl";
 import { MapboxMapContext } from "../../..";
 import PointLayer from "../PointLayer";
 
@@ -47,8 +49,8 @@ for (let i = -180; i < 180; i += 5) {
 }
 
 const circleStyle: {
-  layout: mapboxgl.CircleLayout;
-  paint: mapboxgl.CirclePaint;
+  layout: NonNullable<CircleLayerSpecification["layout"]>;
+  paint: NonNullable<CircleLayerSpecification["paint"]>;
 } = {
   layout: {},
   paint: {
@@ -62,8 +64,8 @@ const circleStyle: {
 
 // Big transparent circles to increase the touch area of points
 const bigTransparentCircleStyle: {
-  layout: mapboxgl.CircleLayout;
-  paint: mapboxgl.CirclePaint;
+  layout: NonNullable<CircleLayerSpecification["layout"]>;
+  paint: NonNullable<CircleLayerSpecification["paint"]>;
 } = {
   layout: {},
   paint: {
@@ -72,16 +74,16 @@ const bigTransparentCircleStyle: {
   },
 };
 
-const InteractivePointsStateManager: Story<
+const InteractivePointsStateManager: StoryFn<
   InteractivePointLayerProps & {
     points: InteractivePointData[];
     draggable: boolean;
     withBigTouchZones: boolean;
   }
-> = (props) => {
+> = (props: any) => {
   const { map } = useContext(MapboxMapContext);
   const [points, setPoints] = useState(
-    props.points.map((p) => ({
+    props.points.map((p: InteractivePointData) => ({
       ...p,
       properties: {
         id: p.id,
@@ -94,7 +96,9 @@ const InteractivePointsStateManager: Story<
     }))
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const handleDragStart = useCallback(() => {}, []);
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const handleDragEnd = useCallback(() => {}, []);
   const handleDrag = useCallback(
     (
@@ -104,7 +108,7 @@ const InteractivePointsStateManager: Story<
       if (!map) return;
 
       // Move the point to the current pointer position
-      setPoints((_points) =>
+      setPoints((_points: any[]) =>
         _points.map((p) => (p.id !== id ? p : { ...p, ...newLocation }))
       );
     },
@@ -112,8 +116,8 @@ const InteractivePointsStateManager: Story<
   );
 
   const handleClick = useCallback((id: string | number) => {
-    setPoints((old) =>
-      old.map((o) =>
+    setPoints((old: any[]) =>
+      old.map((o: { id: string | number; properties: { selected: any } }) =>
         o.id === id
           ? {
               ...o,
@@ -125,8 +129,8 @@ const InteractivePointsStateManager: Story<
   }, []);
 
   const handleHoverEnter = useCallback((id: string | number) => {
-    setPoints((old) =>
-      old.map((o) =>
+    setPoints((old: any[]) =>
+      old.map((o: { id: string | number; properties: any }) =>
         o.id === id
           ? {
               ...o,
@@ -138,8 +142,8 @@ const InteractivePointsStateManager: Story<
   }, []);
 
   const handleHoverLeave = useCallback((id: string | number) => {
-    setPoints((old) =>
-      old.map((o) =>
+    setPoints((old: any[]) =>
+      old.map((o: { id: string | number; properties: any }) =>
         o.id === id
           ? {
               ...o,

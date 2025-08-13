@@ -1,10 +1,13 @@
-import React, { useContext, useRef, useMemo } from "react";
-import { MapboxContext } from "../../MapboxMap";
-import { featureCollection, point } from "@turf/helpers";
-import useImageLoader, { ImageDefinition } from "../../../hooks/use-image-loader";
+import { featureCollection, point } from "@turf/turf";
+import type { LayoutSpecification, PaintSpecification } from "mapbox-gl";
+import React, { useContext, useMemo, useRef } from "react";
+import useImageLoader, {
+  ImageDefinition,
+} from "../../../hooks/use-image-loader";
 import useMapLayer from "../../../hooks/useMapLayer";
+import { MapboxContext } from "../../MapboxMap";
 
-export type PointLayerProps = {
+export interface PointLayerProps {
   points: {
     id: string | number;
     latitude: number;
@@ -14,8 +17,8 @@ export type PointLayerProps = {
 
   type: "circle" | "symbol";
   style: {
-    layout: mapboxgl.CircleLayout | mapboxgl.SymbolLayout;
-    paint: mapboxgl.CirclePaint | mapboxgl.SymbolPaint;
+    layout: LayoutSpecification;
+    paint: PaintSpecification;
   };
 
   /** An optional list of images to load for use in symbol layers. Each object
@@ -35,7 +38,7 @@ export type PointLayerProps = {
 
   id?: string;
   beforeLayer?: string;
-};
+}
 
 // Used to generate unique layer and source IDs if one is not provided
 let idIncrement = 0;

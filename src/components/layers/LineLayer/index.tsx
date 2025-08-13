@@ -1,13 +1,15 @@
-import React, { useContext, useRef, useMemo } from "react";
-import { MapboxContext } from "../../MapboxMap";
-import { featureCollection, lineString, Position } from "@turf/helpers";
+import { featureCollection, lineString } from "@turf/turf";
+import type { Position } from "geojson";
+import { LayoutSpecification, PaintSpecification } from "mapbox-gl";
+import React, { useContext, useMemo, useRef } from "react";
 import useMapLayer from "../../../hooks/useMapLayer";
+import { MapboxContext } from "../../MapboxMap";
 
 export type LineCoordinates = (
   | Position
   | { latitude: number; longitude: number }
 )[];
-export type LineLayerProps = {
+export interface LineLayerProps {
   lines:
     | {
         id: string | number;
@@ -22,8 +24,8 @@ export type LineLayerProps = {
       >;
 
   style: {
-    layout: mapboxgl.LineLayout;
-    paint: mapboxgl.LinePaint;
+    layout: LayoutSpecification;
+    paint: PaintSpecification;
   };
 
   /** Callback fired after the layer has been added to the map. Useful if you
@@ -33,7 +35,7 @@ export type LineLayerProps = {
 
   id?: string;
   beforeLayer?: string;
-};
+}
 
 // Used to generate unique layer and source IDs if one is not provided
 let idIncrement = 0;
