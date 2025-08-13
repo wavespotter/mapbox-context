@@ -54,8 +54,8 @@ const RasterLayer: React.FC<{
       try {
         map.removeLayer(id);
         map.removeSource(id);
-      } catch (_e) {
-        // TODO: Determine why we are ignoring errors here
+      } catch (e) {
+        console.warn("Error removing Raster layer:", e);
       }
     };
   }, [

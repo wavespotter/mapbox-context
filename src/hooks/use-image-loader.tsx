@@ -49,8 +49,8 @@ const useImageLoader = (
           ...old,
           [m.name]: { name: m.name, url: m.url, status: "deleted" },
         }));
-      } catch (_e) {
-        // TODO: Determine why we are ignoring errors here
+      } catch (e) {
+        console.warn("Error removing image:", e);
       }
     });
 

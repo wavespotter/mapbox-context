@@ -18,8 +18,8 @@ const CustomLayer: React.FC<CustomLayerProps> = ({ renderer, beforeLayer }) => {
     return () => {
       try {
         map.removeLayer(id);
-      } catch (_e) {
-        // TODO: Determine why we are ignoring errors here
+      } catch (e) {
+        console.warn("Error removing custom layer:", e);
       }
     };
   }, [renderer, beforeLayer, map]);
