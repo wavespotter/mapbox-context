@@ -34,22 +34,22 @@ export type MapEventHandler<TEvent = MapMouseEvent | MapTouchEvent> = (
   id: string | number,
   e: TEvent
 ) => void;
-export type NativeMapEventHandler<TEvent = MapMouseEvent | MapTouchEvent> = (
+type NativeMapEventHandler<TEvent = MapMouseEvent | MapTouchEvent> = (
   e: TEvent & {
     features?: GeoJSONFeature[] | undefined;
   }
 ) => void;
 
-export type MapDragStartHandler = (
+type MapDragStartHandler = (
   id: string | number,
   offset: Point,
   e: MapMouseEvent | MapTouchEvent
 ) => void;
-export type MapDragEndHandler = (
+type MapDragEndHandler = (
   id: string | number,
   e: MapMouseEvent | MapTouchEvent
 ) => void;
-export type MapDragHandler = (
+type MapDragHandler = (
   id: string | number,
   newCoordinates: { longitude: number; latitude: number },
   offset: Point,
@@ -134,8 +134,10 @@ class MapboxEventHandlerPool {
     this.map.on("touchcancel", this.onMouseUp);
 
     // Make sure to capture pointerup events anywhere in the window
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    window.addEventListener("pointerup", () => this.onMouseUp(undefined as any));
+    window.addEventListener("pointerup", () =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      this.onMouseUp(undefined as any)
+    );
     this.registered = true;
   }
 
@@ -156,8 +158,10 @@ class MapboxEventHandlerPool {
     this.map.off("touchcancel", this.onMouseUp);
 
     // Make sure to capture pointerup events anywhere in the window
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    window.removeEventListener("pointerup", () => this.onMouseUp(undefined as any));
+    window.removeEventListener("pointerup", () =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      this.onMouseUp(undefined as any)
+    );
 
     this.registered = false;
   }
@@ -184,7 +188,9 @@ class MapboxEventHandlerPool {
   };
 
   // Handle hover events and drag events
-  public onMouseMove: NativeMapEventHandler = (e: MapMouseEvent | MapTouchEvent) => {
+  public onMouseMove: NativeMapEventHandler = (
+    e: MapMouseEvent | MapTouchEvent
+  ) => {
     // Don't do anything if we're currently dragging a point
     if (this.dragging !== null) return;
     const sortedFeatures = this.sortEventFeatures(e);

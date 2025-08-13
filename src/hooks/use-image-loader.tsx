@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 export interface ImageDefinition { url: string; name: string; sdf?: boolean }
 
-export type ImageStatus = Record<
+type ImageStatus = Record<
   string,
   {
     name: string;

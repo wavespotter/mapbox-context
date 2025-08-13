@@ -1,7 +1,7 @@
 import { Map as MbMap } from "mapbox-gl";
 import React from "react";
 
-export interface MapboxContextType {
+interface MapboxContextType {
   map: MbMap | null;
   width: number;
   height: number;

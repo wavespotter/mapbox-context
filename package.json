@@ -16,7 +16,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "yarn typecheck && yarn lint && yarn test && vite build --config vite.config.js",
+    "build": "yarn typecheck && yarn knip && yarn lint && yarn test && vite build --config vite.config.js",
     "build:watch": "vite build --config vite.config.js --watch",
     "lint": "eslint .",
     "knip": "knip",

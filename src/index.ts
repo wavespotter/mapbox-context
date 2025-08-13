@@ -1,5 +1,6 @@
 // Import and re-export all objects and types this library should expose
 import MapboxMap, { MapboxContext } from "./components/MapboxMap";
+import CustomLayer from "./components/layers/CustomLayer";
 import DOMLayer from "./components/layers/DOMLayer";
 import FillLayer from "./components/layers/FillLayer";
 import InteractiveFillLayer from "./components/layers/InteractiveFillLayer";
@@ -22,6 +23,7 @@ import useMapLayerInteractions, {
 import useMapLayer from "./hooks/useMapLayer";
 
 export {
+  CustomLayer,
   DOMLayer,
   FillLayer,
   InteractiveFillLayer,
