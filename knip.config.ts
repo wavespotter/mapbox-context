@@ -1,7 +1,5 @@
 /**
- * Our https://knip.dev/ config file.
- * Using a Typescript config file is nice because we get some typehinting
- * and can add contextual comments, which wouldn't be possible in JSON config files.
+ * https://knip.dev/overview/configuration
  */
 import type { KnipConfig } from "knip";
 

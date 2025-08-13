@@ -1,4 +1,9 @@
-import { Map, LayoutSpecification, PaintSpecification, LayerSpecification } from "mapbox-gl";
+import {
+  Map,
+  LayoutSpecification,
+  PaintSpecification,
+  LayerSpecification,
+} from "mapbox-gl";
 import { useEffect } from "react";
 import useDeepCompareEffect from "use-deep-compare-effect";
 
@@ -51,7 +56,6 @@ const useMapLayer = <
     };
     // Ignore changes to style — they will be updated separately via the
     // `useMapLayerStyle` hook
-     
   }, [map, id, type]);
 
   // Synchronize style state
@@ -75,18 +79,12 @@ const useMapLayerStyle = (
     // Copy over paint and layout properties one by one because that's the way
     // Mapbox rolls.
     for (const prop in style.paint) {
-      map.setPaintProperty(
-        layerID,
-        prop as keyof PaintSpecification,
-        style.paint[prop as keyof typeof style.paint]
-      );
+      const typedProp = prop as keyof PaintSpecification;
+      map.setPaintProperty(layerID, typedProp, style.paint[typedProp]);
     }
     for (const prop in style.layout) {
-      map.setLayoutProperty(
-        layerID,
-        prop as keyof LayoutSpecification,
-        style.layout[prop as keyof typeof style.layout]
-      );
+      const typedProp = prop as keyof LayoutSpecification;
+      map.setLayoutProperty(layerID, typedProp, style.layout[typedProp]);
     }
   }, [map, layerID, style]);
 };
