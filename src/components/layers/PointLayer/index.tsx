@@ -1,6 +1,6 @@
 import { featureCollection, point } from "@turf/turf";
 import type { LayoutSpecification, PaintSpecification } from "mapbox-gl";
-import React, { useContext, useMemo, useRef } from "react";
+import { useContext, useMemo, useRef } from "react";
 import useImageLoader, {
   ImageDefinition,
 } from "../../../hooks/use-image-loader";
@@ -43,7 +43,7 @@ export interface PointLayerProps {
 // Used to generate unique layer and source IDs if one is not provided
 let idIncrement = 0;
 
-const PointLayer: React.FC<PointLayerProps> = ({
+const PointLayer = ({
   points,
   style,
   type,
@@ -51,7 +51,7 @@ const PointLayer: React.FC<PointLayerProps> = ({
   symbolImages,
   id: _id,
   beforeLayer,
-}) => {
+}: PointLayerProps) => {
   const id = useRef(`point-layer-${++idIncrement}`);
   if (_id) id.current = _id;
 

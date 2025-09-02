@@ -1,5 +1,5 @@
-import React, { useEffect, useContext } from "react";
 import { CustomLayerInterface } from "mapbox-gl";
+import { useContext, useEffect } from "react";
 
 import MapboxContext from "../../../contexts/MapboxContext";
 
@@ -8,7 +8,7 @@ interface CustomLayerProps {
   beforeLayer?: string;
 }
 
-const CustomLayer: React.FC<CustomLayerProps> = ({ renderer, beforeLayer }) => {
+const CustomLayer = ({ renderer, beforeLayer }: CustomLayerProps) => {
   const { map } = useContext(MapboxContext);
   useEffect(() => {
     if (map === null) return;

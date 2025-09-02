@@ -1,10 +1,10 @@
-import React, { useState, useContext } from "react";
+import React, { useContext, useState } from "react";
 
-import { MapboxContext } from "../../MapboxMap";
-import LineLayer, { LineLayerProps, LineCoordinates } from "../LineLayer";
 import useMapLayerInteractions, {
   InteractiveLayerProps,
 } from "../../../hooks/useMapInteractions";
+import { MapboxContext } from "../../MapboxMap";
+import LineLayer, { LineCoordinates, LineLayerProps } from "../LineLayer";
 
 interface InteractiveLineProperties {
   /** Flag indicating whether this line should respond to drag events */
@@ -45,7 +45,7 @@ export type InteractiveLineLayerProps = LineLayerProps &
  *  not actually manage the hover state of each line or move lines as they
  *  are dragged— that responsibility is left up to a higher level component.
  */
-const InteractiveLineLayer: React.FC<InteractiveLineLayerProps> = (props) => {
+const InteractiveLineLayer = (props: InteractiveLineLayerProps) => {
   const {
     onClick,
     onHoverEnter,
@@ -76,7 +76,9 @@ const InteractiveLineLayer: React.FC<InteractiveLineLayerProps> = (props) => {
     eventHandlerPool,
   });
 
-  return <LineLayer {...props} onAdd={setLineLayerID} beforeLayer={beforeLayer} />;
+  return (
+    <LineLayer {...props} onAdd={setLineLayerID} beforeLayer={beforeLayer} />
+  );
 };
 
 export default InteractiveLineLayer;

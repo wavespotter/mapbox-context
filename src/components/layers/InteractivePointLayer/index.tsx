@@ -1,10 +1,10 @@
-import React, { useState, useContext } from "react";
+import React, { useContext, useState } from "react";
 
-import { MapboxContext } from "../../MapboxMap";
-import PointLayer, { PointLayerProps } from "../PointLayer";
 import useMapLayerInteractions, {
   InteractiveLayerProps,
 } from "../../../hooks/useMapInteractions";
+import { MapboxContext } from "../../MapboxMap";
+import PointLayer, { PointLayerProps } from "../PointLayer";
 
 export interface InteractivePointData {
   /** Unique ID for this point that will be passed to all interaction event
@@ -42,7 +42,7 @@ export type InteractivePointLayerProps = PointLayerProps &
  *  not actually manage the hover state of each point or move points as they
  *  are dragged— that responsibility is left up to a higher level component.
  */
-const InteractivePointLayer: React.FC<InteractivePointLayerProps> = (props) => {
+const InteractivePointLayer = (props: InteractivePointLayerProps) => {
   const {
     onClick,
     onHoverEnter,
@@ -73,7 +73,9 @@ const InteractivePointLayer: React.FC<InteractivePointLayerProps> = (props) => {
     eventHandlerPool,
   });
 
-  return <PointLayer {...props} onAdd={setPointLayerID} beforeLayer={beforeLayer} />;
+  return (
+    <PointLayer {...props} onAdd={setPointLayerID} beforeLayer={beforeLayer} />
+  );
 };
 
 export default InteractivePointLayer;

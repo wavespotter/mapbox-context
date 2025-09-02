@@ -1,10 +1,13 @@
-import React, { useState, useContext } from "react";
+import React, { useContext, useState } from "react";
 
-import { MapboxContext } from "../../MapboxMap";
-import FillLayer, { FillLayerProps, PolygonRingCoordinates } from "../FillLayer";
 import useMapLayerInteractions, {
   InteractiveLayerProps,
 } from "../../../hooks/useMapInteractions";
+import { MapboxContext } from "../../MapboxMap";
+import FillLayer, {
+  FillLayerProps,
+  PolygonRingCoordinates,
+} from "../FillLayer";
 
 interface InteractiveFillProperties {
   /** Flag indicating whether this fill should respond to drag events */
@@ -42,7 +45,7 @@ export type InteractiveFillLayerProps = FillLayerProps &
  *  not actually manage the hover state of each fill or move fills as they
  *  are dragged— that responsibility is left up to a higher level component.
  */
-const InteractiveFillLayer: React.FC<InteractiveFillLayerProps> = (props) => {
+const InteractiveFillLayer = (props: InteractiveFillLayerProps) => {
   const {
     onClick,
     onHoverEnter,
@@ -73,7 +76,9 @@ const InteractiveFillLayer: React.FC<InteractiveFillLayerProps> = (props) => {
     eventHandlerPool,
   });
 
-  return <FillLayer {...props} onAdd={setFillLayerID} beforeLayer={beforeLayer} />;
+  return (
+    <FillLayer {...props} onAdd={setFillLayerID} beforeLayer={beforeLayer} />
+  );
 };
 
 export default InteractiveFillLayer;

@@ -1,7 +1,7 @@
 import { featureCollection, polygon } from "@turf/turf";
 import type { Position } from "geojson";
 import { LayoutSpecification, PaintSpecification } from "mapbox-gl";
-import React, { useContext, useMemo, useRef } from "react";
+import { useContext, useMemo, useRef } from "react";
 import useImageLoader from "../../../hooks/use-image-loader";
 import useMapLayer from "../../../hooks/useMapLayer";
 import { MapboxContext } from "../../MapboxMap";
@@ -46,14 +46,14 @@ export interface FillLayerProps {
 // Used to generate unique layer and source IDs if one is not provided
 let idIncrement = 0;
 
-const FillLayer: React.FC<FillLayerProps> = ({
+const FillLayer = ({
   polygons,
   style,
   images,
   onAdd,
   id: _id,
   beforeLayer,
-}) => {
+}: FillLayerProps) => {
   const id = useRef(`fill-layer-${++idIncrement}`);
   if (_id) id.current = _id;
 

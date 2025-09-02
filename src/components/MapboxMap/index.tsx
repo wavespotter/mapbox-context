@@ -29,12 +29,13 @@ export interface MapboxMapProps {
   dragRotate?: boolean;
   touchZoomRotate?: boolean | { enableRotation: boolean };
   touchPitch?: boolean;
+  children?: React.ReactNode;
 }
 
 /** A modern Mapbox React component using hooks and context
  *  that supports composable, declarative data layers
  */
-const MapboxMap: React.FC<MapboxMapProps> = ({
+const MapboxMap = ({
   token,
   styleUrl,
   width,
@@ -49,7 +50,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   dragRotate = true,
   touchZoomRotate = true,
   touchPitch = true,
-}) => {
+}: MapboxMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
 
   // Store the current Mapbox map instance in component state
