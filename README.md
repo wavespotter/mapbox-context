@@ -45,7 +45,7 @@ Access the map and its properties from within a child component using context:
 ```typescript
 import { MapboxMapContext } from "@sofarocean/mapbox-context";
 
-const MyMapComponent: React.FC<{}> = () => {
+const MyMapComponent = () => {
   const { map, transform } = useContext(MapboxMapContext);
 
   return <div>Zoom level is: {transform.zoom}</div>;
@@ -58,7 +58,7 @@ Declaratively register map even handlers:
 import { useMapEvent } from "@sofarocean/mapbox-context";
 
 // Must be mounted within a `MapboxMap` context
-const MyMapComponent: React.FC<{}> = () => {
+const MyMapComponent = () => {
   const [position, setPosition] = useState<[number, number] | null>(null);
   const handleClick = useCallback((ev) => {
     setPosition(ev.lngLat);

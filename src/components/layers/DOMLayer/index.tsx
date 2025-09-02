@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from "react";
+import React, { useCallback, useContext } from "react";
 import MapboxContext from "../../../contexts/MapboxContext";
 
 interface MapboxDOMLayerProps {
@@ -31,10 +31,11 @@ interface MapboxDOMLayerProps {
    *  zoom level
    */
   zoomFunction?: (z: number) => number;
+  children?: React.ReactNode;
 }
 
 /** Pin any DOM element to a specific position on the Mapbox map. */
-const MapboxDOMLayer: React.FC<MapboxDOMLayerProps> = ({
+const MapboxDOMLayer = ({
   position,
   heading,
   zoomFunction,
@@ -45,7 +46,7 @@ const MapboxDOMLayer: React.FC<MapboxDOMLayerProps> = ({
   rotateWithMap = true,
   renderWorldCopies = false,
   children,
-}) => {
+}: MapboxDOMLayerProps) => {
   const { map, transform, width } = useContext(MapboxContext);
 
   // Forward scroll events to the Mapbox map
@@ -117,7 +118,6 @@ const MapboxDOMLayer: React.FC<MapboxDOMLayerProps> = ({
             onPointerUp={!trapMouse ? pointerHandler : undefined}
             onMouseDown={!trapMouse ? pointerHandler : undefined}
             onMouseUp={!trapMouse ? pointerHandler : undefined}
-
           >
             {children}
           </div>

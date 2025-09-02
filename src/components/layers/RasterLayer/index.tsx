@@ -3,11 +3,11 @@ import {
   PaintSpecification,
   SourceSpecification,
 } from "mapbox-gl";
-import React, { useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import useDeepCompareEffect from "use-deep-compare-effect";
 import MapboxContext from "../../../contexts/MapboxContext";
 
-const RasterLayer: React.FC<{
+interface RasterLayerProps {
   sourceOptions: SourceSpecification;
   minzoom?: number;
   maxzoom?: number;
@@ -16,7 +16,9 @@ const RasterLayer: React.FC<{
   paintOptions?: PaintSpecification;
   beforeLayer?: string;
   opacity?: number;
-}> = ({
+}
+
+const RasterLayer = ({
   sourceOptions,
   layoutOptions,
   paintOptions,
@@ -25,7 +27,7 @@ const RasterLayer: React.FC<{
   maxzoom = 22,
   beforeLayer,
   opacity = 1,
-}) => {
+}: RasterLayerProps) => {
   const { map } = useContext(MapboxContext);
 
   useDeepCompareEffect(() => {
