@@ -23,6 +23,7 @@ export interface MapboxMapProps {
     bounds: LngLatBoundsLike;
     options?: MapOptions["fitBoundsOptions"];
   };
+  maxBounds: LngLatBoundsLike,
   transformRequest?: RequestTransformFunction;
   center?: LngLatLike;
   zoom?: number;
@@ -44,6 +45,7 @@ const MapboxMap = ({
   showControls = false,
   scrollZoom = true,
   fitBounds,
+  maxBounds,
   transformRequest,
   center,
   zoom,
@@ -97,9 +99,9 @@ const MapboxMap = ({
     const newMap = new mapboxgl.Map({
       container: mapContainer.current ?? "",
       style: styleUrl,
-      attributionControl: false,
       transformRequest,
       accessToken: token,
+      maxBounds
     });
     newMap.on("load", () => {
       setMap(newMap);
