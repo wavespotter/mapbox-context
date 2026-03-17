@@ -7,7 +7,10 @@
   "author": "Wayfinder Engineering <eng-wayfinder@sofarocean.com>",
   "license": "MIT",
   "private": false,
-  "repository": "https://github.com/wavespotter/mapbox-context",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wavespotter/mapbox-context.git"
+  },
   "homepage": "https://github.com/wavespotter/mapbox-context",
   "files": [
     "package.json",
