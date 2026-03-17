@@ -103,7 +103,7 @@ const MapboxMap = ({
     });
     newMap.addControl(new mapboxgl.AttributionControl({
       customAttribution: 'ECMWF'
-    }), "bottom");
+    }), "bottom-left");
     newMap.on("load", () => {
       setMap(newMap);
     });
