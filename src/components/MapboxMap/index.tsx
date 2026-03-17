@@ -102,8 +102,8 @@ const MapboxMap = ({
       accessToken: token,
     });
     newMap.addControl(new mapboxgl.AttributionControl({
-      customAttribution: 'European Center for Medium-Range Weather Forecasts'
-    }));
+      customAttribution: 'ECMWF'
+    }), "bottom");
     newMap.on("load", () => {
       setMap(newMap);
     });
