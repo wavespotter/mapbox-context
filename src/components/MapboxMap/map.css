@@ -1,0 +1,4 @@
+.mapboxgl-ctrl-bottom-left {
+  display: flex;
+  flex-direction: column-reverse;
+}

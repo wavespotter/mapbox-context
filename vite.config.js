@@ -3,10 +3,12 @@ import { dirname } from "node:path";
 import { fileURLToPath, URL } from "node:url";
 import { extname, relative, resolve } from "path";
 import { defineConfig } from "vite";
+import cssInjectedByJs from "vite-plugin-css-injected-by-js";
 import dts from "vite-plugin-dts";
 
 export default defineConfig({
   plugins: [
+    cssInjectedByJs(),
     dts({
       exclude: ["**/*.stories.tsx", "**/storybook-helpers/*"],
     }),

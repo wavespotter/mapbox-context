@@ -1,3 +1,4 @@
+import "./map.css";
 import mapboxgl, {
   LngLatBoundsLike,
   LngLatLike,
@@ -101,6 +102,7 @@ const MapboxMap = ({
       transformRequest,
       accessToken: token,
     });
+    newMap.addControl(new mapboxgl.AttributionControl(), "bottom-left");
     newMap.on("load", () => {
       setMap(newMap);
     });

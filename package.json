@@ -1,13 +1,16 @@
 {
   "name": "@sofarocean/mapbox-context",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "A React wrapper for Mapbox GL JS built for the era of React Context and Hooks",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Wayfinder Engineering <eng-wayfinder@sofarocean.com>",
   "license": "MIT",
   "private": false,
-  "repository": "https://github.com/wavespotter/mapbox-context",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wavespotter/mapbox-context.git"
+  },
   "homepage": "https://github.com/wavespotter/mapbox-context",
   "files": [
     "package.json",
@@ -44,6 +47,7 @@
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.41.0",
     "vite": "^7.1.2",
+    "vite-plugin-css-injected-by-js": "^4.0.1",
     "vite-plugin-dts": "^4.5.4",
     "vitest": "^3.2.4"
   },
