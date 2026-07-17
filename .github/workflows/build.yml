@@ -2,13 +2,17 @@ name: Build
 
 on:
   pull_request:
-    types: 
+    types:
       - opened
       - reopened
       - synchronize
 
 jobs:
   build:
+    strategy:
+      matrix:
+        react: [18, 19]
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -20,7 +24,9 @@ jobs:
           registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
-        run: yarn install
+        run: |
+          yarn install
+          yarn add -D react@${{ matrix.react }}
 
       - name: Run build
         run: yarn build
