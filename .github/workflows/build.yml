@@ -11,7 +11,7 @@ jobs:
   build:
     strategy:
       matrix:
-        react: [18, 19]
+        react: [15, 18, 19]
 
     runs-on: ubuntu-latest
     steps:
@@ -32,3 +32,6 @@ jobs:
 
       - name: Run build
         run: yarn build
+
+      - name: Run tests
+        run: yarn test
