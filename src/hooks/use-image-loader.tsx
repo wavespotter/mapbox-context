@@ -21,7 +21,7 @@ const useImageLoader = (
   map: mapboxgl.Map | null,
   imageDefs: ImageDefinition[] | undefined
 ) => {
-  const recentImageDefs = useRef<ImageDefinition[] | undefined>();
+  const recentImageDefs = useRef<ImageDefinition[] | undefined>(undefined);
   const [images, setImages] = useState<ImageStatus>({});
   const [loadingComplete, setLoadingComplete] = useState(false);
 

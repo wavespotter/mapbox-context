@@ -56,7 +56,7 @@ const symbolStyle: {
 };
 
 const Template: StoryFn<PointLayerProps> = (
-  args: JSX.IntrinsicAttributes &
+  args: React.JSX.IntrinsicAttributes &
     PointLayerProps & { children?: React.ReactNode }
 ) => <PointLayer {...args} />;
 
