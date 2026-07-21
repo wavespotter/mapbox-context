@@ -70,3 +70,14 @@ const MyMapComponent = () => {
   return <div>Last clicked position was: ({position?.join(", ")})</div>;
 };
 ```
+
+## Releasing
+
+Releases are done manually, locally. To create a new release do the following:
+
+1. **Bump the `version` in `package.json`:** This indicates new package version to NPM.
+1. **`yarn build`:** This makes a `/dist` build directory that gets bumped into the NPM package.
+1. **`npm publish`:** This makes actually sends the new package to NPM.
+1. **Create a new commit and merge it:** Mostly so we commit the current package version. This can also be done before the other steps.
+
+Often it's useful to test a change to this package in something that consumes it. In that case, you can make a version and suffix it with `-rc1` to denote "release candidate 1".
