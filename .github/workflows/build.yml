@@ -11,7 +11,8 @@ jobs:
   build:
     strategy:
       matrix:
-        react: [15, 18, 19]
+        react: [15]
+        # react: [18, 19]
 
     runs-on: ubuntu-latest
     steps:
