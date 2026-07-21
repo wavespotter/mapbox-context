@@ -26,9 +26,13 @@ jobs:
       - name: Install dependencies
         run: |
           yarn install
+
           # Overwrite react dependencies to test compatibility with different versions
-          yarn add -D react@${{ matrix.react }}
-          yarn add -D react-dom@${{ matrix.react }}
+          yarn add -D \
+            react@${{ matrix.react }} \
+            react-dom@${{ matrix.react }} \
+            @types/react@${{ matrix.react }} \
+            @types/react-dom@${{ matrix.react }} \
 
       - name: Run build
         run: yarn build
