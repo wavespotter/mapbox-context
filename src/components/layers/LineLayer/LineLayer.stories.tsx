@@ -99,7 +99,7 @@ const lineStyle: {
 };
 
 const Template: StoryFn<LineLayerProps> = (
-  args: JSX.IntrinsicAttributes &
+  args: React.JSX.IntrinsicAttributes &
     LineLayerProps & { children?: React.ReactNode }
 ) => <LineLayer {...args} />;
 

@@ -186,7 +186,7 @@ const MapboxMap = ({
     }
   }, [touchPitch, map]);
 
-  const zoomControl = useRef<ZoomControl>();
+  const zoomControl = useRef<ZoomControl>(undefined);
   useEffect(() => {
     if (showControls) {
       zoomControl.current = new ZoomControl();
@@ -206,7 +206,7 @@ const MapboxMap = ({
       height: containerBoundsHeight || 0,
       transform,
     }),
-    [map, containerBoundsWidth, containerBoundsHeight, transform]
+    [map, containerBoundsWidth, containerBoundsHeight, transform],
   );
 
   return (
