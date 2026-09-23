@@ -99,12 +99,18 @@ interface eventHandlerPoolLayerDefinition {
   onDragEnd?: MapEventHandler;
 }
 
+const DRAG_CLICK_THRESHOLD_PIXELS = 3;
+const DRAG_TOUCH_THRESHOLD_PIXELS = 10;
+
 class MapboxEventHandlerPool {
   private layers: eventHandlerPoolLayerDefinition[];
   private lastHoverFeature: GeoJSONFeature | null = null;
   private dragging: {
     feature: GeoJSONFeature;
     offset: Point;
+    originLngLat: LngLat;
+    exceeded: boolean;
+    threshold: number;
   } | null = null;
 
   private registered = false;
@@ -237,6 +243,15 @@ class MapboxEventHandlerPool {
 
       if (this.dragging.feature.properties?.id === undefined) return;
 
+      if (!this.dragging.exceeded) {
+        // compare the origin to the current position and reject it if it's less
+        // than the threshold to prevent accidentally converting a click to a drag when
+        // clicking causes a 1 or 2 pixel jitter
+        const originPixel = this.map.project(this.dragging.originLngLat);
+        if (pointerProjected.dist(originPixel) < this.dragging.threshold) return;
+        this.dragging.exceeded = true;
+      }
+
       // Fire event on appropriate layer's onDrag handler
       this.layers
         .find((l) => l.id === this.dragging?.feature.layer?.id)
@@ -280,7 +295,14 @@ class MapboxEventHandlerPool {
     const pointerProjected = this.map.project(e.lngLat);
     const offset = pointerProjected.sub(pointProjected);
 
-    this.dragging = { feature: highestPriorityDragableFeature, offset };
+    this.dragging = {
+      feature: highestPriorityDragableFeature,
+      offset,
+      originLngLat: e.lngLat,
+      exceeded: false,
+      // we need a slightly larger threshold for touch events than click events
+      threshold: e.type === 'touchstart' ? DRAG_TOUCH_THRESHOLD_PIXELS : DRAG_CLICK_THRESHOLD_PIXELS
+    };
 
     // Fire event on appropriate layer's onDragStart handler
     this.layers
