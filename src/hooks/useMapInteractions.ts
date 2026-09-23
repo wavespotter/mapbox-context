@@ -245,7 +245,7 @@ class MapboxEventHandlerPool {
 
       if (!this.dragging.exceeded) {
         // compare the origin to the current position and reject it if it's less
-        // than the threshold to prevent accidentally "moving" a waypoint when
+        // than the threshold to prevent accidentally converting a click to a drag when
         // clicking causes a 1 or 2 pixel jitter
         const originPixel = this.map.project(this.dragging.originLngLat);
         if (pointerProjected.dist(originPixel) < this.dragging.threshold) return;
