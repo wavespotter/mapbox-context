@@ -20,7 +20,7 @@ jobs:
       - name: Set Up Node
         uses: actions/setup-node@v3
         with:
-          node-version: "lts/Jod"
+          node-version: "22.23.4"
           registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
